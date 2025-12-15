@@ -30,6 +30,7 @@ Enemy::~Enemy() {
 // 1 animation enemy
 Enemy::Enemy(const char* filePath, int frameCount){
 
+
     // Load textures
     m_animationTextures[0] = LoadTexture(filePath); 
     m_enemyHurt = LoadTexture("src/resources/Textures/hoodyGuyEnemyHurt.png"); // Load enemy hurt texture
@@ -54,6 +55,7 @@ Enemy::Enemy(const char* filePath, int frameCount){
 
 // Multi frame animation enemy
 Enemy::Enemy(const char* filePath, const char* filePath2, const char* filePath3, int frameCount) {
+
     // Load textures
     m_animationTextures[0] = LoadTexture(filePath); 
     m_animationTextures[1] = LoadTexture(filePath2);

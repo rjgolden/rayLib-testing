@@ -1,6 +1,5 @@
-#include <raylib.h>
 #include <iostream>
-#include <vector> 
+#include <vector>
 #include "animation.h"
 #include "player.h"
 #include "enemy.h"
@@ -34,9 +33,9 @@ void updateParticles() {
             p.pos.x += p.vel.x * GetFrameTime();
             p.pos.y += p.vel.y * GetFrameTime();
             p.life -= GetFrameTime();
-            p.scale = p.life; // Scale based on life
+            p.scale = p.life; 
             if (p.life <= 0) {
-                p.tint.a = 0; // Make transparent when dead
+                p.tint.a = 0; 
             }
 
             Texture2D& tex = particleTextures[p.textureIndex];
@@ -113,7 +112,6 @@ int main()
     // Power-up variables
     bool spawnPowerUp = false;
     bool powerUpSpawned = false;
-
 
     // Create hit boxes for player and collectables
     Rectangle collectableRect = {collectableX, collectableY, (float)collectable.width, (float)collectable.height};

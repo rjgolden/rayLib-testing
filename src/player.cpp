@@ -1,6 +1,6 @@
 #include "player.h"
 
-// Default and Destructor
+// Default and Destructor-
 Player::Player(){
     m_animationTextures[0] = LoadTexture("src/resources/Animations/hoodyIdleAnimation.png");
     m_animationTextures[1] = LoadTexture("src/resources/Animations/hoodyRunAnimation.png");
@@ -173,7 +173,7 @@ void Player::updateSprite() {
     if(IsKeyPressed(KEY_RIGHT)){
         m_idle = false;
         m_direction = 4; 
-        m_attackRect.x = m_positionX + 28.0f; 
+        m_attackRect.x = m_positionX + 55.0f; 
         m_attackRect.y = m_positionY + 8.0f;
         m_attackRect.width = 35.0f;
         m_attackRect.height = 15.0f;

@@ -4,7 +4,7 @@
 class Player: public Animation {
 
     private:
-        //player variables
+        // player variables
         float m_playerSpeed; 
         int m_playerHealth;
         bool m_hurtFrameActive; // Need to implement this
