@@ -24,6 +24,8 @@ Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, 
     std::cout << "Animation created\n";
 }
 
+Animation::Animation() {};
+
 Animation::~Animation(){
     if(!m_animationTextures.empty()){
         UnloadTexture(m_animationTextures.back());
@@ -39,7 +41,8 @@ void Animation::animateSprite(){
         m_runningTime = 0.0f;
         m_animationRect.x = (float)m_currentFrame * m_animationRect.width;
         m_currentFrame++;
-        if (m_currentFrame > m_frameCount) m_currentFrame = rand() % m_frameCount; 
+        //if (m_currentFrame > m_frameCount) m_currentFrame = rand() % m_frameCount; // for random  
+        if (m_currentFrame > m_frameCount) m_currentFrame = 0; 
     }
 }
 

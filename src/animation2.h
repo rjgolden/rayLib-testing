@@ -7,7 +7,7 @@
 
 class Animation {
 
-    private:
+    protected:
         std::vector<Texture2D> m_animationTextures; // Textures for the animation (idle and moving left and right for now)
         Rectangle m_animationRect; // Source rectangle for the animation
         Rectangle m_hitboxRect; // Hitbox for the animation
@@ -22,6 +22,7 @@ class Animation {
 
     public: 
         Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY);
+        Animation();
         ~Animation();
         
         void animateSprite();
