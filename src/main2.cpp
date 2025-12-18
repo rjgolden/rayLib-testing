@@ -2,6 +2,7 @@
 #include "animation2.h"
 #include "player2.h"
 #include "config.h"
+#include "soundSystem.h"
 
 float ToggleFullscreenWindow(){
 
@@ -27,22 +28,33 @@ void checkAnimation(Animation& anim){
 
 }
 
-int main(){ 
-
+void setup(){
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(config::screenWidth, config::screenHeight, "Raylib Program");
     SetWindowMinSize(config::screenWidth, config::screenHeight);
     SetTargetFPS(60);
-    SetWindowIcon(LoadImage("src/resources/Textures/space.png"));                              
+    SetWindowIcon(LoadImage("src/resources/Textures/space.png")); 
+}
+
+int main(){ 
+                         
+    setup();
 
     float scale = 1.0f;
+    SoundSystem soundSystem;  
     Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, config::screenWidth/2, config::screenHeight/2);
     Texture2D gameScreen = LoadTexture("src/resources/Textures/space.png");
+    Texture2D gameScreen2 = LoadTexture("src/resources/Textures/desert.png");
     Player hoodyAnimation("src/resources/Animations/hoodyIdleAnimation.png", "src/resources/Animations/hoodyRunAnimation.png", "src/resources/Animations/hoodyRunAnimation2.png", 6);
+    Sound place = LoadSound("src/resources/Sounds/place.mp3");
+    Music music = LoadMusicStream("src/resources/Sounds/fireSound.mp3");
+    PlayMusicStream(music);
+    SetMusicVolume(music, 0.05f);
 
-    
     while (!WindowShouldClose())
     {   
+
+        UpdateMusicStream(music);
 
         if(IsKeyPressed(KEY_SPACE)) {
             scale = ToggleFullscreenWindow();
@@ -55,17 +67,16 @@ int main(){
             int y = GetMouseY();
             std::cout << "Mouse position: (" << x << "," << y << ")\n";
             fireAnimation.setPosition((float)x/scale - fireAnimation.getWidth()/2,(float)y/scale - fireAnimation.getHeight()/2);
+            PlaySound(place);
         }
 
         BeginDrawing();
             ClearBackground(WHITE);
             DrawTextureEx(gameScreen, {0.0f, 0.0f}, 0.0f, scale, WHITE);
+            DrawTextureEx(gameScreen2, {640.0f, 0.0f}, 0.0f, scale, WHITE);
             fireAnimation.updateSprite();
             hoodyAnimation.updateSprite();
         EndDrawing();
     }      
     CloseWindow();
 }
-    
-
-

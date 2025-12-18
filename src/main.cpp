@@ -60,8 +60,6 @@ int main()
  
     // Audio setup
     SoundSystem soundSystem; // Initialize sound system
-    InitAudioDevice();
-    AttachAudioMixedProcessor(SoundSystem::ProcessAudio); // Attach audio processor
 
     // Load music and sounds
     Sound collectableSound = LoadSound("src/resources/Sounds/coin-pickup-98269.mp3");

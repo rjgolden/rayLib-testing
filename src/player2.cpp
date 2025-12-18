@@ -2,30 +2,32 @@
 
 /*-------------------------------*/
 Player::Player(const char* filePath, const char* filePath2, const char* filePath3, int frameCount) {
+    
+    // vector Derived from animation class
     m_animationTextures.push_back(LoadTexture(filePath)); 
     m_animationTextures.push_back(LoadTexture(filePath2));
     m_animationTextures.push_back(LoadTexture(filePath3));
     m_currentTexture = &m_animationTextures[0]; // default is idle
     
 
-    // Rectangles 
+    // Rectangles - Derived from animation class
     m_animationRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height }; 
     m_hitboxRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height };
 
-    // frame stuff
-    m_currentFrame = 0; // 0 default frame
-    m_frameCount = frameCount;
+    // frame stuff - All derived from animation class
+    m_currentFrame = 0;
+    m_frameCount = frameCount; 
     m_runningTime = 0.0f; 
     m_updateTime = 1.0f / 12.0f; 
     m_scale = 1.0f;
 
     // position and speed
-    m_positionX = 320; 
-    m_positionY = 180; 
+    m_positionX = 320; // Derived from animation class
+    m_positionY = 180; // Derived from animation class
     m_idle = true; 
     m_direction = 0;
     m_lastDirection = 0;
-    m_playerSpeed = 3.0f; 
+    m_playerSpeed = 1.15f; 
 }
 
 Player::~Player() {
@@ -40,7 +42,6 @@ Player::~Player() {
 void Player::drawSprite(){
     DrawTexturePro(*m_currentTexture, m_animationRect, {(float)m_positionX*m_scale, (float)m_positionY*m_scale, 32.0f*m_scale, 32.0f*m_scale}, {0.0f, 0.0f}, 0.0f, WHITE);
 }
-
 
 void Player::setState(uint8_t newState){
 
@@ -103,14 +104,5 @@ void Player::updateSprite() {
 
 }
 
-bool Player::isAnimationComplete() {
-    // Check if the current frame is the last frame of the animation
-    return (m_currentFrame >= m_frameCount);
-}
 
-//----------------------------------------------//
-
-void Player::setPlayerSpeed(float speed) {
-    m_playerSpeed = speed;
-}
 

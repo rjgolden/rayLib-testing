@@ -1,18 +1,18 @@
 #include "soundSystem.h"
-#include <cmath>
+
+SoundSystem::SoundSystem(){
+    InitAudioDevice();
+    AttachAudioMixedProcessor(ProcessAudio); 
+}
+
+SoundSystem::~SoundSystem(){
+    CloseAudioDevice(); 
+}
 
 // Define static member variables
 float SoundSystem::m_exponent = 1.0f;
 float SoundSystem::m_averageVolume[400] = { 0.0f };
 float SoundSystem::m_volume = 0.5f;
-
-SoundSystem::SoundSystem() {
-   // empty 
-}
-
-SoundSystem::~SoundSystem(){
-    //empty
-}
 
 void SoundSystem::ProcessAudio(void *buffer, unsigned int frames){
     float *samples = (float *)buffer;

@@ -29,8 +29,9 @@ Animation::Animation() {};
 Animation::~Animation(){
     if(!m_animationTextures.empty()){
         UnloadTexture(m_animationTextures.back());
-        std::cout << "Animation Destroyed, texture succesfully unloaded.\n";
+        m_animationTextures.pop_back();
     }
+    std::cout << "Animation Destroyed, texture(s) succesfully unloaded.\n";
 }
 
 /*-------------------------------*/
