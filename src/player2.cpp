@@ -1,12 +1,12 @@
 #include "player2.h"
 
 /*-------------------------------*/
-Player::Player(const char* filePath, const char* filePath2, const char* filePath3, int frameCount) {
+Player::Player(const char* filePath, const char* filePath2, const char* filePath3, uint8_t frameCount) {
     
     // vector Derived from animation class
-    m_animationTextures.push_back(LoadTexture(filePath)); 
-    m_animationTextures.push_back(LoadTexture(filePath2));
-    m_animationTextures.push_back(LoadTexture(filePath3));
+    m_animationTextures[0] = LoadTexture(filePath); 
+    m_animationTextures[1] = LoadTexture(filePath2);
+    m_animationTextures[2] = LoadTexture(filePath3);
     m_currentTexture = &m_animationTextures[0]; // default is idle
     
 
@@ -28,19 +28,19 @@ Player::Player(const char* filePath, const char* filePath2, const char* filePath
     m_direction = 0;
     m_lastDirection = 0;
     m_playerSpeed = 1.15f; 
+
 }
 
 Player::~Player() {
-     if(!m_animationTextures.empty()){
-        UnloadTexture(m_animationTextures.back());
-        m_animationTextures.pop_back();
-    }
-    std::cout << "Player Object Destroyed, texture succesfully unloaded.\n";
+    UnloadTexture(m_animationTextures[0]);
+    UnloadTexture(m_animationTextures[1]);
+    UnloadTexture(m_animationTextures[2]);
+    std::cout << "Player Object Destroyed, textures succesfully unloaded.\n";
 }
 
 /*-------------------------------*/
 void Player::drawSprite(){
-    DrawTexturePro(*m_currentTexture, m_animationRect, {(float)m_positionX*m_scale, (float)m_positionY*m_scale, 32.0f*m_scale, 32.0f*m_scale}, {0.0f, 0.0f}, 0.0f, WHITE);
+    DrawTexturePro(*m_currentTexture, m_animationRect, {(float)m_positionX, (float)m_positionY, 32.0f, 32.0f}, {0.0f, 0.0f}, 0.0f, WHITE);
 }
 
 void Player::setState(uint8_t newState){
@@ -94,12 +94,11 @@ void Player::updateSprite() {
     m_hitboxRect.x = m_positionX; 
     m_hitboxRect.y = m_positionY;
 
+
     //---------------//
     setState(m_direction);  
     animateSprite();
     drawSprite();
-
-    //---------------//
     drawHitbox();
 
 }

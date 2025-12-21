@@ -2,13 +2,13 @@
 
 #include <raylib.h>
 #include <iostream>
-#include <vector>
+#include <array>
 #include <cstdint>
 
 class Animation {
 
     protected:
-        std::vector<Texture2D> m_animationTextures; // Textures for the animation (idle and moving left and right for now)
+        std::array<Texture2D, 3> m_animationTextures; // Textures for the animation (idle and moving left and right for now)
         Rectangle m_animationRect; // Source rectangle for the animation
         Rectangle m_hitboxRect; // Hitbox for the animation
 

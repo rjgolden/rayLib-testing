@@ -17,9 +17,9 @@ class Player: public Animation {
         Texture2D* m_currentTexture;  // Pointer to current texture
         int8_t m_currentState;// Track current state of textures 
 
-
     public:
-        Player(const char* filePath, const char* filePath2, const char* filePath3, int frameCount);
+
+        Player(const char* filePath, const char* filePath2, const char* filePath3, uint8_t frameCount);
         ~Player();
 
         void drawSprite();

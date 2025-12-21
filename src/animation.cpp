@@ -7,7 +7,7 @@ Animation::Animation(){
     m_animationRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height };
     m_hitboxRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height };
     m_currentFrame = 0; // Starting frame
-    m_frameCount = 6; // Number of frames in the idle animation
+    m_frameCount = 0; 
     m_runningTime = 0.0f; 
     m_updateTime = 1.0f / 12.0f; 
     m_positionX = rand() % 540; 

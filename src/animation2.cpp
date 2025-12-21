@@ -4,7 +4,7 @@
 Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY){
 
     // Load textures
-    m_animationTextures.push_back(LoadTexture(filePath));
+    m_animationTextures[0] = LoadTexture(filePath);
 
     // Rectangles 
     m_animationRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height }; 
@@ -27,10 +27,7 @@ Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, 
 Animation::Animation() {};
 
 Animation::~Animation(){
-    if(!m_animationTextures.empty()){
-        UnloadTexture(m_animationTextures.back());
-        m_animationTextures.pop_back();
-    }
+    UnloadTexture(m_animationTextures[0]);
     std::cout << "Animation Destroyed, texture(s) succesfully unloaded.\n";
 }
 
@@ -48,21 +45,21 @@ void Animation::animateSprite(){
 }
 
 void Animation::drawSprite(){
-    DrawTexturePro(m_animationTextures[0], m_animationRect, {(float)m_positionX*m_scale, (float)m_positionY*m_scale, 32.0f*m_scale, 32.0f*m_scale}, {0.0f, 0.0f}, 0.0f, WHITE);
+    DrawTexturePro(m_animationTextures[0], m_animationRect, {(float)m_positionX, (float)m_positionY, 32.0f, 32.0f}, {0.0f, 0.0f}, 0.0f, WHITE);
 }
 
 void Animation::drawHitbox(){
-    DrawRectangleLines(m_positionX*m_scale, m_positionY*m_scale, m_hitboxRect.width*m_scale, m_hitboxRect.height*m_scale, RED);
+    DrawRectangleLines(m_positionX, m_positionY, m_hitboxRect.width, m_hitboxRect.height, RED);
 }
 
 void Animation::drawRectbox(){
-    DrawRectangleLines(m_positionX*m_scale, m_positionY*m_scale, m_animationRect.width*m_scale, m_animationRect.height*m_scale, GREEN);
+    DrawRectangleLines(m_positionX, m_positionY, m_animationRect.width, m_animationRect.height, GREEN);
 }
 
 void Animation::updateSprite(){
     animateSprite();
     drawSprite();
-    drawHitbox();
+    //drawHitbox();
     drawRectbox();
 }
 
