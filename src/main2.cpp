@@ -23,14 +23,6 @@ float ToggleFullscreenWindow(){
 
 }
 
-void checkAnimation(Animation& anim){
-
-    std::cout << "Animation Position: (" << anim.getPositionX() << "," << anim.getPositionY() << ")\n";
-    std::cout << "Animation Width: " << anim.getWidth() << "\n";
-    std::cout << "Animation Height: " << anim.getHeight() << "\n";
-
-}
-
 void setup(){
     SetConfigFlags(FLAG_WINDOW_RESIZABLE); // only for testing purposes 
     InitWindow(config::screenWidth, config::screenHeight, "Raylib Program");
@@ -59,28 +51,26 @@ int main(){
     music.looping = true;
 
     // Camera
-    Camera2D m_camera;
-    m_camera = {0};
-    m_camera.target = (Vector2) { hoodyAnimation.getPositionX(), hoodyAnimation.getPositionY() };
-    m_camera.offset = (Vector2) {(float)GetScreenWidth()  * 0.5f, (float)GetScreenHeight() * 0.5f};
-    m_camera.rotation = 0.0f;
-    m_camera.zoom = scale;
+    GameCamera gameCamera;
 
     while (!WindowShouldClose())
     {   
 
         UpdateMusicStream(music);
 
-        m_camera.target = (Vector2){ hoodyAnimation.getPositionX(), hoodyAnimation.getPositionY() };
+        //gameCamera.camera.target = (Vector2){ hoodyAnimation.getPositionX(), hoodyAnimation.getPositionY() };
+        gameCamera.camera.target.x += (hoodyAnimation.getPositionX() - gameCamera.camera.target.x) * 0.5f * GetFrameTime();
+        gameCamera.camera.target.y += (hoodyAnimation.getPositionY() - gameCamera.camera.target.y) * 0.5f * GetFrameTime();
+
         if(IsKeyPressed(KEY_SPACE)) {
             scale = ToggleFullscreenWindow();
             fireAnimation.setScale(scale);
             hoodyAnimation.setScale(scale);
-            m_camera.zoom = scale;
-            m_camera.offset = {(float)GetScreenWidth()  * 0.5f, (float)GetScreenHeight() * 0.5f};
+            gameCamera.camera.zoom = scale;
+            gameCamera.camera.offset = {(float)GetScreenWidth()  * 0.5f, (float)GetScreenHeight() * 0.5f};
         }
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-            Vector2 worldPos = GetScreenToWorld2D((Vector2){(float)GetMouseX(), (float)GetMouseY()}, m_camera);
+            Vector2 worldPos = GetScreenToWorld2D((Vector2){(float)GetMouseX(), (float)GetMouseY()}, gameCamera.camera);
             int x = worldPos.x - fireAnimation.getWidth()/2;
             int y = worldPos.y - fireAnimation.getWidth()/2;
             fireAnimation.setPosition(x,y);
@@ -89,7 +79,7 @@ int main(){
 
         BeginDrawing();
             ClearBackground(WHITE);
-            BeginMode2D(m_camera);
+            BeginMode2D(gameCamera.camera);
                 DrawTextureEx(gameScreen, {0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
                 DrawTextureEx(gameScreen2, {640.0f, 0.0f}, 0.0f, 1.0f, WHITE);
                 hoodyAnimation.updateSprite();

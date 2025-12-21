@@ -60,6 +60,7 @@ void Player::setState(uint8_t newState){
 void Player::updateSprite() {
 
     bool wasIdle = m_idle;
+    int lastKey = 0;
     m_direction = 0;
 
     //---------------//
@@ -67,21 +68,35 @@ void Player::updateSprite() {
         m_idle = false;
         m_direction = 2;
         m_positionX += m_playerSpeed;
+        lastKey = KEY_D;
     }
     else if (IsKeyDown(KEY_A)) {
         m_idle = false;
         m_direction = 1; 
         m_positionX -= m_playerSpeed;
+        lastKey = KEY_A;
     }
     if (IsKeyDown(KEY_W)){ 
         m_idle = false;
         m_direction = m_lastDirection;
         m_positionY -= m_playerSpeed;
+        lastKey = KEY_W;
     }
     else if (IsKeyDown(KEY_S)){ 
         m_idle = false;
         m_direction = m_lastDirection;
         m_positionY += m_playerSpeed;
+        lastKey = KEY_S;
+    }
+
+    if(IsKeyPressed(KEY_F)){
+        m_direction = m_lastDirection;
+        switch(lastKey){
+            case KEY_W: m_positionY -= 40; break;
+            case KEY_A: m_positionX -= 40; break;
+            case KEY_S: m_positionY += 40; break;
+            case KEY_D: m_positionX += 40; break;
+        }
     }
 
     // Reset animation if state changed
