@@ -21,6 +21,7 @@ Enemy::Enemy(){
     m_enemySpeed = 2.0;
     m_health = 100;
 }
+
 Enemy::~Enemy() {
     UnloadTexture(m_animationTextures[0]);
     UnloadTexture(m_animationTextures[1]);

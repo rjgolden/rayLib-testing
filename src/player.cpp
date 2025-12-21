@@ -101,7 +101,7 @@ void Player::drawSprite(){
 }
 
 void Player::drawAttackHitbox(){
-     DrawRectangleLines(m_attackRect.x, m_attackRect.y, m_attackRect.width, m_attackRect.height, GREEN);
+    DrawRectangleLines(m_attackRect.x, m_attackRect.y, m_attackRect.width, m_attackRect.height, GREEN);
 }
 
 void Player::setState(int newState){

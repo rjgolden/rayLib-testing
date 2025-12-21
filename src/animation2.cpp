@@ -45,7 +45,7 @@ void Animation::animateSprite(){
 }
 
 void Animation::drawSprite(){
-    DrawTexturePro(m_animationTextures[0], m_animationRect, {(float)m_positionX, (float)m_positionY, 32.0f, 32.0f}, {0.0f, 0.0f}, 0.0f, WHITE);
+    DrawTexturePro(m_animationTextures[0], m_animationRect, {(float)m_positionX, (float)m_positionY, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height}, {0.0f, 0.0f}, 0.0f, WHITE);
 }
 
 void Animation::drawHitbox(){
@@ -59,7 +59,6 @@ void Animation::drawRectbox(){
 void Animation::updateSprite(){
     animateSprite();
     drawSprite();
-    //drawHitbox();
     drawRectbox();
 }
 

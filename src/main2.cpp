@@ -31,12 +31,23 @@ void setup(){
     SetWindowIcon(LoadImage("src/resources/Textures/space.png")); 
 }
 
+void drawBackground(){
+    static Texture2D gameScreen = LoadTexture("src/resources/Textures/space.png");
+    DrawTextureEx(gameScreen, {0.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // UP
+    DrawTextureEx(gameScreen, {640.0f, 0.0f}, 0.0f, 1.0f, WHITE);   // RIGHT
+    DrawTextureEx(gameScreen, {0.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // DOWN
+    DrawTextureEx(gameScreen, {-640.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // LEFT
+    DrawTextureEx(gameScreen, {0.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // CENTER
+    DrawTextureEx(gameScreen, {640.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // TOP RIGHT
+    DrawTextureEx(gameScreen, {-640.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // TOP LEFT
+    DrawTextureEx(gameScreen, {640.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // BOTTOM RIGHT
+    DrawTextureEx(gameScreen, {-640.0f, 360.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM LEFT
+}
+
 int main(){ 
                          
     setup();
     float scale = 1.0f;  
-    Texture2D gameScreen = LoadTexture("src/resources/Textures/space.png");
-    Texture2D gameScreen2 = LoadTexture("src/resources/Textures/desert.png");
     Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, config::screenWidth/2, config::screenHeight/2);
     Player hoodyAnimation("src/resources/Animations/hoodyIdleAnimation.png", "src/resources/Animations/hoodyRunAnimation.png", "src/resources/Animations/hoodyRunAnimation2.png", 6);
 
@@ -71,8 +82,8 @@ int main(){
         }
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             Vector2 worldPos = GetScreenToWorld2D((Vector2){(float)GetMouseX(), (float)GetMouseY()}, gameCamera.camera);
-            int x = worldPos.x - fireAnimation.getWidth()/2;
-            int y = worldPos.y - fireAnimation.getWidth()/2;
+            float x = worldPos.x - fireAnimation.getWidth()/2;
+            float y = worldPos.y - fireAnimation.getHeight()/2;
             fireAnimation.setPosition(x,y);
             PlaySound(place);
         }
@@ -80,10 +91,9 @@ int main(){
         BeginDrawing();
             ClearBackground(WHITE);
             BeginMode2D(gameCamera.camera);
-                DrawTextureEx(gameScreen, {0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
-                DrawTextureEx(gameScreen2, {640.0f, 0.0f}, 0.0f, 1.0f, WHITE);
-                hoodyAnimation.updateSprite();
+                drawBackground();
                 fireAnimation.updateSprite();
+                hoodyAnimation.updateSprite();
             EndMode2D();
         EndDrawing();
     }      
