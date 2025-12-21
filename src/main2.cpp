@@ -24,7 +24,6 @@ float ToggleFullscreenWindow(){
 }
 
 void setup(){
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE); // only for testing purposes 
     InitWindow(config::screenWidth, config::screenHeight, "Raylib Program");
     SetWindowMinSize(config::screenWidth, config::screenHeight);
     SetTargetFPS(60);
@@ -48,12 +47,14 @@ int main(){
                          
     setup();
     float scale = 1.0f;  
-    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, config::screenWidth/2, config::screenHeight/2);
+    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, 12.0f, config::screenWidth/2, config::screenHeight/2);
+    Animation coinAnimation("src/resources/Animations/coin_gold.png", 8, 14.0f, config::screenWidth/2, config::screenHeight/2);
     Player hoodyAnimation("src/resources/Animations/hoodyIdleAnimation.png", "src/resources/Animations/hoodyRunAnimation.png", "src/resources/Animations/hoodyRunAnimation2.png", 6);
 
     // sound stuff
     SoundSystem soundSystem;  
-    Sound place = LoadSound("src/resources/Sounds/place.mp3");
+    //Sound place = LoadSound("src/resources/Sounds/place.mp3");
+    Sound coin = LoadSound("src/resources/Sounds/coin.mp3");
 
     // music
     Music music = LoadMusicStream("src/resources/Sounds/fireSound.mp3");
@@ -69,30 +70,33 @@ int main(){
 
         UpdateMusicStream(music);
 
-        //gameCamera.camera.target = (Vector2){ hoodyAnimation.getPositionX(), hoodyAnimation.getPositionY() };
-        gameCamera.camera.target.x += (hoodyAnimation.getPositionX() - gameCamera.camera.target.x) * 0.5f * GetFrameTime();
-        gameCamera.camera.target.y += (hoodyAnimation.getPositionY() - gameCamera.camera.target.y) * 0.5f * GetFrameTime();
+        gameCamera.camera.target.x += (hoodyAnimation.getPositionX() - gameCamera.camera.target.x) * (hoodyAnimation.getPlayerSpeed() * GetFrameTime());
+        gameCamera.camera.target.y += (hoodyAnimation.getPositionY() - gameCamera.camera.target.y) * (hoodyAnimation.getPlayerSpeed() * GetFrameTime());
 
         if(IsKeyPressed(KEY_SPACE)) {
             scale = ToggleFullscreenWindow();
-            fireAnimation.setScale(scale);
-            hoodyAnimation.setScale(scale);
             gameCamera.camera.zoom = scale;
             gameCamera.camera.offset = {(float)GetScreenWidth()  * 0.5f, (float)GetScreenHeight() * 0.5f};
         }
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             Vector2 worldPos = GetScreenToWorld2D((Vector2){(float)GetMouseX(), (float)GetMouseY()}, gameCamera.camera);
-            float x = worldPos.x - fireAnimation.getWidth()/2;
-            float y = worldPos.y - fireAnimation.getHeight()/2;
-            fireAnimation.setPosition(x,y);
-            PlaySound(place);
+            float x = worldPos.x - fireAnimation.getWidth()/2.0f;
+            float y = worldPos.y - fireAnimation.getHeight()/2.0f;
+            coinAnimation.setPosition(x,y);
+            PlaySound(coin);
         }
 
+        int intFPS = GetFPS();
+        std::string stringFPS = std::to_string(intFPS);
+        const char* FPS = stringFPS.c_str();
+
         BeginDrawing();
-            ClearBackground(WHITE);
+            ClearBackground(WHITE);  
+            DrawText(FPS, 600, 0, 50, WHITE);                         
             BeginMode2D(gameCamera.camera);
                 drawBackground();
                 fireAnimation.updateSprite();
+                coinAnimation.updateSprite();
                 hoodyAnimation.updateSprite();
             EndMode2D();
         EndDrawing();

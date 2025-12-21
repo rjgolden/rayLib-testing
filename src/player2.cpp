@@ -11,14 +11,15 @@ Player::Player(const char* filePath, const char* filePath2, const char* filePath
     
 
     // Rectangles - Derived from animation class
-    m_animationRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height }; 
-    m_hitboxRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height };
+    m_animationRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / (float)frameCount, (float)m_animationTextures[0].height }; 
+    m_hitboxRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / (float)frameCount, (float)m_animationTextures[0].height };
 
     // frame stuff - All derived from animation class
     m_currentFrame = 0;
     m_frameCount = frameCount; 
-    m_runningTime = 0.0f; 
-    m_updateTime = 1.0f / 12.0f; 
+    m_runningTime = 0.0f;
+    m_animationTime = 12.0f; // Default - 83.33ms
+    m_updateTime = 1.0f / m_animationTime; 
     m_scale = 1.0f;
 
     // position and speed
@@ -52,14 +53,16 @@ void Player::drawSprite(){
 
 void Player::setState(uint8_t newState){
 
+    m_updateTime = 1.0f / m_animationTime;
+
     if (newState != m_currentState) {  
         m_currentState = newState;
         m_lastDirection = newState;
 
         switch(newState) {
-            case 1: m_currentTexture = &m_animationTextures[2]; break;  // left
-            case 2: m_currentTexture = &m_animationTextures[1]; break;  // right
-            default: m_currentTexture = &m_animationTextures[0]; break; // idle
+            case 1: m_currentTexture = &m_animationTextures[2]; m_animationTime = 12.0; break;  // left
+            case 2: m_currentTexture = &m_animationTextures[1]; m_animationTime = 12.0; break;  // right
+            default: m_currentTexture = &m_animationTextures[0]; m_animationTime = 6.0; break; // idle 
         }
     }
 
@@ -69,7 +72,7 @@ void Player::handleMovement(){
 
     bool wasIdle = m_idle;
     m_direction = 0;
-
+    
     //---------------//
     if (IsKeyDown(KEY_D)){ 
         m_idle = false;
@@ -151,5 +154,8 @@ void Player::updateSprite() {
 
 }
 
-
+// GETTERS
+float Player::getPlayerSpeed(){
+    return m_playerSpeed;
+}
 

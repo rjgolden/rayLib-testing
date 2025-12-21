@@ -1,20 +1,21 @@
 #include "animation2.h"
 
 /*-------------------------------*/
-Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY){
+Animation::Animation(const char* filePath, uint8_t frameCount, float animationTime, float positionX, float positionY){
 
     // Load textures
     m_animationTextures[0] = LoadTexture(filePath);
 
     // Rectangles 
-    m_animationRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height }; 
-    m_hitboxRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height };
+    m_animationRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / (float)frameCount, (float)m_animationTextures[0].height }; 
+    m_hitboxRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / (float)frameCount, (float)m_animationTextures[0].height };
 
     // frame stuff
     m_currentFrame = 0; // Starting frame
     m_frameCount = frameCount; // Number of frames in the idle animation
     m_runningTime = 0.0f; 
-    m_updateTime = 1.0f / 12.0f;
+    m_animationTime = animationTime; // 83.33ms
+    m_updateTime = 1.0f / m_animationTime;
     m_scale = 1.0f; 
 
     // position and speed
@@ -45,7 +46,7 @@ void Animation::animateSprite(){
 }
 
 void Animation::drawSprite(){
-    DrawTexturePro(m_animationTextures[0], m_animationRect, {(float)m_positionX, (float)m_positionY, (float)m_animationTextures[0].width / 6.0f, (float)m_animationTextures[0].height}, {0.0f, 0.0f}, 0.0f, WHITE);
+    DrawTexturePro(m_animationTextures[0], m_animationRect, {(float)m_positionX, (float)m_positionY, (float)m_animationTextures[0].width / (float)m_frameCount, (float)m_animationTextures[0].height}, {0.0f, 0.0f}, 0.0f, WHITE);
 }
 
 void Animation::drawHitbox(){
@@ -59,7 +60,8 @@ void Animation::drawRectbox(){
 void Animation::updateSprite(){
     animateSprite();
     drawSprite();
-    drawRectbox();
+    //drawRectbox();
+    //drawHitbox();
 }
 
 /*-------------GETTERS------------*/
@@ -87,8 +89,4 @@ Rectangle Animation::getHitboxRect() {
 void Animation::setPosition(float x, float y){
     m_positionX = x;
     m_positionY = y;
-}
-
-void Animation::setScale(float scale){
-    m_scale = scale;
 }

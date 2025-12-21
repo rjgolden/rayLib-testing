@@ -3,6 +3,18 @@
 
 class Player: public Animation {
 
+    public:
+
+        Player(const char* filePath, const char* filePath2, const char* filePath3, uint8_t frameCount);
+        ~Player();
+
+        void drawSprite();
+        void setState(uint8_t newState);
+        void handleDash();
+        void handleMovement();
+        void updateSprite();
+        float getPlayerSpeed();
+
     private:
     
         // player variables
@@ -23,16 +35,5 @@ class Player: public Animation {
         float m_dashTime;    // how long the dash lasts
         float m_dashTimer;
         bool m_isDashing;
-
-    public:
-
-        Player(const char* filePath, const char* filePath2, const char* filePath3, uint8_t frameCount);
-        ~Player();
-
-        void drawSprite();
-        void setState(uint8_t newState);
-        void handleDash();
-        void handleMovement();
-        void updateSprite();
 
 };

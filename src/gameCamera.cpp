@@ -3,8 +3,9 @@
 
 GameCamera::GameCamera(){
     camera = {0};
-    camera.target = (Vector2) { config::screenWidth/2, config::screenHeight/2 };
-    camera.offset = (Vector2) {(float)GetScreenWidth()  * 0.5f, (float)GetScreenHeight() * 0.5f};
+    Vector2 middle ={ (float)config::screenWidth/2.0f, (float)config::screenHeight/2.0f };
+    camera.target = middle;
+    camera.offset = middle;
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 }
