@@ -2,7 +2,7 @@
 
 SoundSystem::SoundSystem(){
     InitAudioDevice();
-    AttachAudioMixedProcessor(ProcessAudio); 
+    AttachAudioMixedProcessor(ProcessAudio);
 }
 
 SoundSystem::~SoundSystem(){

@@ -1,6 +1,5 @@
 #pragma once
-#include "raylib.h"
-#include <cmath>
+#include "includes.h"
 
 class SoundSystem {
 

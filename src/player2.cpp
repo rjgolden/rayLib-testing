@@ -1,12 +1,14 @@
 #include "player2.h"
 
 /*-------------------------------*/
-Player::Player(const char* filePath, const char* filePath2, const char* filePath3, uint8_t frameCount) {
+Player::Player(const char* filePath, const char* filePath2, const char* filePath3, const char* filePath4, const char* filePath5, uint8_t frameCount) {
     
     // vector Derived from animation class
     m_animationTextures[0] = LoadTexture(filePath); 
     m_animationTextures[1] = LoadTexture(filePath2);
     m_animationTextures[2] = LoadTexture(filePath3);
+    m_animationTextures[3] = LoadTexture(filePath4);
+    m_animationTextures[4] = LoadTexture(filePath5);
     m_currentTexture = &m_animationTextures[0]; // default is idle
     
 
@@ -23,12 +25,12 @@ Player::Player(const char* filePath, const char* filePath2, const char* filePath
     m_scale = 1.0f;
 
     // position and speed
-    m_positionX = 320; // Derived from animation class
-    m_positionY = 180; // Derived from animation class
+    m_positionX = 320.0f; // Derived from animation class
+    m_positionY = 148.0f; // Derived from animation class
     m_idle = true; 
     m_direction = 0;
     m_lastDirection = 0;
-    m_playerSpeed = 1.15f; 
+    m_playerSpeed = 1.55f; 
     m_lastKey = 0;
 
     // dash stuff
@@ -43,6 +45,8 @@ Player::~Player() {
     UnloadTexture(m_animationTextures[0]);
     UnloadTexture(m_animationTextures[1]);
     UnloadTexture(m_animationTextures[2]);
+    UnloadTexture(m_animationTextures[3]); 
+    UnloadTexture(m_animationTextures[4]); 
     std::cout << "Player Object Destroyed, textures succesfully unloaded.\n";
 }
 
@@ -60,9 +64,11 @@ void Player::setState(uint8_t newState){
         m_lastDirection = newState;
 
         switch(newState) {
-            case 1: m_currentTexture = &m_animationTextures[2]; m_animationTime = 12.0; break;  // left
-            case 2: m_currentTexture = &m_animationTextures[1]; m_animationTime = 12.0; break;  // right
-            default: m_currentTexture = &m_animationTextures[0]; m_animationTime = 6.0; break; // idle 
+            case 1: m_currentTexture = &m_animationTextures[1]; m_animationTime = 12.0; std::cout << "Left\n"; break;  // left
+            case 2: m_currentTexture = &m_animationTextures[2]; m_animationTime = 12.0; std::cout << "Right\n"; break;  // right
+            case 3: m_currentTexture = &m_animationTextures[3]; m_animationTime = 12.0; std::cout << "Up\n"; break;  // up
+            case 4: m_currentTexture = &m_animationTextures[4]; m_animationTime = 12.0; std::cout << "Down\n"; break;  // down
+            default: m_currentTexture = &m_animationTextures[0]; m_animationTime = 6.0; std::cout << "Idle\n"; break; // idle 
         }
     }
 
@@ -74,27 +80,27 @@ void Player::handleMovement(){
     m_direction = 0;
     
     //---------------//
-    if (IsKeyDown(KEY_D)){ 
-        m_idle = false;
-        m_direction = 2;
-        m_positionX += m_playerSpeed;
-        m_lastKey = KEY_D;
-    }
-    else if (IsKeyDown(KEY_A)) {
+    if (IsKeyDown(KEY_A)) {
         m_idle = false;
         m_direction = 1; 
         m_positionX -= m_playerSpeed;
         m_lastKey = KEY_A;
     }
+    else if (IsKeyDown(KEY_D)){ 
+        m_idle = false;
+        m_direction = 2;
+        m_positionX += m_playerSpeed;
+        m_lastKey = KEY_D;
+    }
     if (IsKeyDown(KEY_W)){ 
         m_idle = false;
-        m_direction = m_lastDirection;
+        m_direction = 3;
         m_positionY -= m_playerSpeed;
         m_lastKey = KEY_W;
     }
     else if (IsKeyDown(KEY_S)){ 
         m_idle = false;
-        m_direction = m_lastDirection;
+        m_direction = 4;
         m_positionY += m_playerSpeed;
         m_lastKey = KEY_S;
     }
@@ -109,7 +115,7 @@ void Player::handleMovement(){
 
 void Player::handleDash(){
 
-    if(IsKeyPressed(KEY_F) && !m_isDashing){
+    if(IsKeyPressed(KEY_SPACE) && !m_isDashing){
         m_isDashing = true;
         m_dashTimer = m_dashTime;
     }

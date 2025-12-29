@@ -86,7 +86,7 @@ Rectangle Animation::getHitboxRect() {
 }
 
 /*-------------SETTERS------------*/
-void Animation::setPosition(float x, float y){
-    m_positionX = x;
-    m_positionY = y;
+void Animation::setPosition(Vector2 &position){
+    m_positionX = position.x;
+    m_positionY = position.y;
 }

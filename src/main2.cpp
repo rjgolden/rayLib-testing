@@ -13,17 +13,17 @@ float ToggleFullscreenWindow(){
         int monitor = GetCurrentMonitor();
         SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
         ToggleFullscreen();
-        return 3.0f; // 1920 x 1080 default fullscreen scale
+        return 3.0f; // 1920x1080 default fullscreen scale
     } 
     else{
         ToggleFullscreen();
-        SetWindowSize(640, 360);
+        SetWindowSize(config::screenWidth, config::screenHeight);
         return 1.0f; // 640x360 default scale
     }
 
 }
 
-void setup(){
+void init(){
     InitWindow(config::screenWidth, config::screenHeight, "Raylib Program");
     SetWindowMinSize(config::screenWidth, config::screenHeight);
     SetTargetFPS(60);
@@ -44,12 +44,19 @@ void drawBackground(){
 }
 
 int main(){ 
-                         
-    setup();
+        
+    //setup
+    init();
     float scale = 1.0f;  
-    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, 12.0f, config::screenWidth/2, config::screenHeight/2);
-    Animation coinAnimation("src/resources/Animations/coin_gold.png", 8, 14.0f, config::screenWidth/2, config::screenHeight/2);
-    Player hoodyAnimation("src/resources/Animations/hoodyIdleAnimation.png", "src/resources/Animations/hoodyRunAnimation.png", "src/resources/Animations/hoodyRunAnimation2.png", 6);
+    float deltaTime = 0.0f;
+    float centerX = (float)config::screenWidth/2.0f;
+    float centerY = (float)config::screenHeight/2.0f;
+
+    //animations & player
+    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, 12.0f, centerX, centerY);
+    Animation coinAnimation("src/resources/Animations/coin_gold.png", 8, 14.0f, centerX, centerY);
+    Player playerAnimation("src/resources/Animations/idle.png", "src/resources/Animations/runLeft.png", "src/resources/Animations/runRight.png", 
+                            "src/resources/Animations/runUp.png", "src/resources/Animations/runDown.png", 6);
 
     // sound stuff
     SoundSystem soundSystem;  
@@ -69,37 +76,51 @@ int main(){
     {   
 
         UpdateMusicStream(music);
+        deltaTime = GetFrameTime();
 
-        gameCamera.camera.target.x += (hoodyAnimation.getPositionX() - gameCamera.camera.target.x) * (hoodyAnimation.getPlayerSpeed() * GetFrameTime());
-        gameCamera.camera.target.y += (hoodyAnimation.getPositionY() - gameCamera.camera.target.y) * (hoodyAnimation.getPlayerSpeed() * GetFrameTime());
-
-        if(IsKeyPressed(KEY_SPACE)) {
+        if(IsKeyPressed(KEY_F)) {
             scale = ToggleFullscreenWindow();
+            centerX = ((float)config::screenWidth*scale)/2.0f;
+            centerY = ((float)config::screenHeight*scale)/2.0f;
             gameCamera.camera.zoom = scale;
-            gameCamera.camera.offset = {(float)GetScreenWidth()  * 0.5f, (float)GetScreenHeight() * 0.5f};
+            gameCamera.camera.offset = {centerX, centerY};
+            std::cout << "CenterX: " << centerX << "\n";
+            std::cout << "CenterY: " << centerY << "\n";
         }
+        
+        if(IsKeyDown(KEY_C)) {
+            gameCamera.camera.target.x += (centerX - gameCamera.camera.target.x) * (1.1f * deltaTime);
+            gameCamera.camera.target.y += (centerY - gameCamera.camera.target.y) * (1.1f * deltaTime);
+        }
+        else{
+            gameCamera.camera.target.x += (playerAnimation.getPositionX() - gameCamera.camera.target.x) * (playerAnimation.getPlayerSpeed() * deltaTime);
+            gameCamera.camera.target.y += (playerAnimation.getPositionY() - gameCamera.camera.target.y) * (playerAnimation.getPlayerSpeed() * deltaTime);
+        }
+
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             Vector2 worldPos = GetScreenToWorld2D((Vector2){(float)GetMouseX(), (float)GetMouseY()}, gameCamera.camera);
-            float x = worldPos.x - fireAnimation.getWidth()/2.0f;
-            float y = worldPos.y - fireAnimation.getHeight()/2.0f;
-            coinAnimation.setPosition(x,y);
+            Vector2 position = { worldPos.x - fireAnimation.getWidth()/2.0f, worldPos.y - fireAnimation.getHeight()/2.0f };
+            coinAnimation.setPosition(position);
             PlaySound(coin);
         }
 
+        // FPS
         int intFPS = GetFPS();
         std::string stringFPS = std::to_string(intFPS);
         const char* FPS = stringFPS.c_str();
 
         BeginDrawing();
-            ClearBackground(WHITE);  
-            DrawText(FPS, 600, 0, 50, WHITE);                         
+            ClearBackground(RED);                        
             BeginMode2D(gameCamera.camera);
                 drawBackground();
+                DrawText(FPS, 600, 0, 50, RED); 
                 fireAnimation.updateSprite();
                 coinAnimation.updateSprite();
-                hoodyAnimation.updateSprite();
+                playerAnimation.updateSprite();
             EndMode2D();
         EndDrawing();
     }      
+    
     CloseWindow();
+
 }

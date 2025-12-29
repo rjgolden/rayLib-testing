@@ -26,10 +26,10 @@ class Animation {
         Rectangle getHitboxRect();
 
         // SETTERS
-        void setPosition(float x, float y);
+        void setPosition(Vector2 &position);
         
     protected:
-        std::array<Texture2D, 3> m_animationTextures; // Textures for the animation (idle and moving left and right for now)
+        std::array<Texture2D, 10> m_animationTextures; // Textures for the animation (idle and moving left and right for now)
         Rectangle m_animationRect; // Source rectangle for the animation
         Rectangle m_hitboxRect; // Hitbox for the animation
 

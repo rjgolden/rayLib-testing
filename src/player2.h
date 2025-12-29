@@ -1,11 +1,11 @@
 #pragma once
 #include "animation2.h"
 
-class Player: public Animation {
+class Player : public Animation {
 
     public:
 
-        Player(const char* filePath, const char* filePath2, const char* filePath3, uint8_t frameCount);
+        Player(const char* filePath, const char* filePath2, const char* filePath3, const char* filePath4,  const char* filePath5, uint8_t frameCount);
         ~Player();
 
         void drawSprite();

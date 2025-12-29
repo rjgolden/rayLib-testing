@@ -1,5 +1,4 @@
 #include "gameCamera.h"
-#include "config.h"
 
 GameCamera::GameCamera(){
     camera = {0};
@@ -9,5 +8,3 @@ GameCamera::GameCamera(){
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 }
-
-GameCamera::~GameCamera() {}

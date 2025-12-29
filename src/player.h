@@ -4,6 +4,7 @@
 class Player: public Animation {
 
     private:
+    
         // player variables
         float m_playerSpeed; 
         int m_playerHealth;
@@ -22,6 +23,7 @@ class Player: public Animation {
         Sound m_swordSlashSound;
 
     public:
+
         Player(const char* filePath, const char* filePath2, const char* filePath3, int frameCount);
         Player(const char* filePath, const char* filePath2, const char* filePath3, const char* filePath4, const char* filePath5, int frameCount);
         Player();
