@@ -21,6 +21,8 @@ Player::Player(const char* filePath, const char* filePath2, const char* filePath
     m_positionX = static_cast<float>(config::screenWidth) / 2.0f;
     m_positionY = static_cast<float>(config::screenHeight) / 2.0f; 
 
+    // attack
+
 }
 
 Player::~Player() {
@@ -37,7 +39,7 @@ void Player::drawSprite() {
 }
 
 void Player::drawHitbox() {
-    DrawEllipseLines(m_positionX + 16.5f, m_positionY + 32.0f, 8.0f, 12.0f, RED);                         // Draw circle outline
+    DrawEllipseLines(m_positionX + 16.5f, m_positionY + 32.0f, 8.0f, 12.0f, RED); 
 }
 
 void Player::drawAttackHitbox() {
@@ -53,45 +55,41 @@ void Player::setState(uint8_t newState){
         m_lastDirection = newState;
 
         switch(newState) {
-            case 1: m_currentTexture = &m_animationTextures[1]; m_animationTime = 12.0; break;  // left
-            case 2: m_currentTexture = &m_animationTextures[2]; m_animationTime = 12.0; break;  // right
-            case 3: m_currentTexture = &m_animationTextures[3]; m_animationTime = 12.0; break;  // up
-            case 4: m_currentTexture = &m_animationTextures[0]; m_animationTime = 12.0; break;  // down
-            default: m_currentTexture = &m_animationTextures[0]; m_animationTime = 6.0; break; // idle 
+            case LEFT: m_currentTexture = &m_animationTextures[1]; m_animationTime = 12.0f; break;  // left
+            case RIGHT: m_currentTexture = &m_animationTextures[2]; m_animationTime = 12.0f; break;  // right
+            case UP: m_currentTexture = &m_animationTextures[3]; m_animationTime = 12.0f; break;  // up
+            case IDLE: m_currentTexture = &m_animationTextures[0]; m_animationTime = 12.0f; break;  // down
+            default: m_currentTexture = &m_animationTextures[0]; m_animationTime = 6.0f; break; // idle 
         }
     }
 
 }
 
-void Player::handleMovement(){
-
+void Player::handleKeyboardMovement(){
     bool wasIdle = m_idle; 
     //m_direction = 0; uncomment if idle default is wanted
     
     //---------------//
     if (IsKeyDown(KEY_A)) {
         m_idle = false;
-        m_direction = 1; 
+        m_direction = LEFT; 
         m_positionX -= m_playerSpeed;
-        m_lastKey = KEY_A;
     }
     else if (IsKeyDown(KEY_D)){ 
         m_idle = false;
-        m_direction = 2;
+        m_direction = RIGHT;
         m_positionX += m_playerSpeed;
-        m_lastKey = KEY_D;
     }
+
     if (IsKeyDown(KEY_W)){ 
         m_idle = false;
-        m_direction = 3;
+        m_direction = UP;
         m_positionY -= m_playerSpeed;
-        m_lastKey = KEY_W;
     }
     else if (IsKeyDown(KEY_S)){ 
         m_idle = false;
-        m_direction = 4;
+        m_direction = IDLE;
         m_positionY += m_playerSpeed;
-        m_lastKey = KEY_S;
     }
 
     // Reset animation if state changed
@@ -102,7 +100,57 @@ void Player::handleMovement(){
     
 }
 
-void Player::handleDash(){
+void Player::handleControllerMovement(){
+    
+    m_axisX = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_X);
+    m_axisY = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_Y);
+
+    if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) {
+        m_idle = false;
+        m_direction = LEFT; 
+        m_positionX -= m_playerSpeed;
+    }
+    else if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) {
+            m_idle = false;
+            m_direction = RIGHT;
+            m_positionX += m_playerSpeed;
+    }
+    if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_UP)) {
+        m_idle = false;
+        m_direction = UP;
+        m_positionY -= m_playerSpeed;
+    }
+    else if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_DOWN)) {
+        m_idle = false;
+        m_direction = IDLE;
+        m_positionY += m_playerSpeed;
+    }
+
+    //right controller movement
+    if (std::fabs(m_axisX) > 0.1f) {
+        m_idle = false;
+        m_positionX += m_axisX * m_playerSpeed;
+            if(m_axisX > 0.3f){
+            m_direction = RIGHT;
+        }
+        else if(m_axisX < -0.3f) {
+            m_direction = LEFT;
+        }
+        
+    }
+    if (std::fabs(m_axisY) > 0.1f) {
+        m_idle = false;
+        m_positionY  += m_axisY * m_playerSpeed;
+        if(m_axisY > 0.3f){
+            m_direction = IDLE;
+        }
+        else if(m_axisY < -0.3f) {
+            m_direction = UP;
+        }
+    }
+}
+
+void Player::handleKeyboardDash(){
 
     if(IsKeyPressed(KEY_SPACE) && !m_isDashing){
         m_isDashing = true;
@@ -139,52 +187,254 @@ void Player::handleDash(){
     m_hitboxRect.y = m_positionY;
 }
 
-void Player::handleAttack() {
+void Player::handleControllerDash(){
 
+    if(IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_TRIGGER_2) && !m_isDashing){
+        m_isDashing = true;
+        m_dashTimer = m_dashTime;
+    }
+
+    float deltaTime = GetFrameTime();
+
+    if (m_isDashing) {
+
+        float move = m_dashSpeed * deltaTime;
+
+        // UP & DIAGONAL UPs
+        if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_UP)) m_positionY -= move;
+        else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_UP) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) { m_positionY -= move; m_positionX += move; }
+        else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_UP) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) { m_positionY -= move; m_positionX -= move; }
+
+        // DOWN & DIAGONAL DOWNS
+        if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_DOWN)) m_positionY += move;
+        else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_DOWN) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) { m_positionY += move; m_positionX += move; }
+        else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_DOWN) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) { m_positionY += move; m_positionX -= move; }
+
+        // LEFT & RIGHT
+        if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) m_positionX -= move;
+        if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) m_positionX += move;
+
+        // right controller movement
+        if (std::fabs(m_axisX) > 0.1f) {
+            if(m_axisX > 0.3f){
+                m_positionX  +=  move;
+            }
+            else if(m_axisX < -0.3f) {
+                m_positionX  -= move;
+            }
+            
+        }
+        if (std::fabs(m_axisY) > 0.1f) {
+            if(m_axisY > 0.3f){
+                m_positionY  +=  move;
+            }
+            else if(m_axisY < -0.3f) {
+                m_positionY  -= move;
+            }
+        }
+
+
+        m_dashTimer -= deltaTime;
+        if (m_dashTimer <= 0.0f) {
+            m_isDashing = false;
+        }
+    }
+
+    m_hitboxRect.x = m_positionX; 
+    m_hitboxRect.y = m_positionY;
+}
+
+void Player::handleKeyboardAttack() {
+
+    static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
+    m_attackSound.looping = true;
+
+    //many mahgic numbers here  - will fix in future
     m_attackRect.x = m_positionX + 16.0f;
     m_attackRect.y = m_positionY + 16.0f; 
-    m_attackRect.width = 5.0f; 
-    m_attackRect.height = 5.0f; 
+    m_attackRect.width = 0.0f; 
+    m_attackRect.height = 0.0f; 
 
-    if(IsKeyDown(KEY_RIGHT)){
+    if(IsKeyDown(KEY_LEFT)){
         m_idle = false;
-        m_direction = 2;
+        m_direction = LEFT; 
+        m_attackRect.x -= 64.0f;
+        m_attackRect.width = 55.0f; 
+        m_attackRect.height = 15.0f;
+        if (!IsMusicStreamPlaying(m_attackSound)) {
+            PlayMusicStream(m_attackSound);
+        }
+        UpdateMusicStream(m_attackSound); 
+    }
+    else if(IsKeyDown(KEY_RIGHT)){
+        m_idle = false;
+        m_direction = RIGHT;
         m_attackRect.x += 11.0f; 
         m_attackRect.width = 55.0f;
         m_attackRect.height = 15.0f;
-    }
-    else if(IsKeyDown(KEY_LEFT)){
-        m_idle = false;
-        m_direction = 1; 
-        m_attackRect.x -= 64.0f;
-        m_attackRect.width = 55.0f; 
-        m_attackRect.height = 15.0f; 
+        if (!IsMusicStreamPlaying(m_attackSound)) {
+            PlayMusicStream(m_attackSound);
+        }
+        UpdateMusicStream(m_attackSound); 
     }
     else if(IsKeyDown(KEY_UP)){
         m_idle = false;
-        m_direction = 3; 
+        m_direction = UP; 
         m_attackRect.x -= 8.0f;
         m_attackRect.y -= 40.0f;
         m_attackRect.width = 15.0f;
         m_attackRect.height = 55.0f;
+        if (!IsMusicStreamPlaying(m_attackSound)) {
+            PlayMusicStream(m_attackSound);
+        }
+        UpdateMusicStream(m_attackSound); 
     }
     else if(IsKeyDown(KEY_DOWN)){
         m_idle = false;
-        m_direction = 0; 
+        m_direction = IDLE; 
         m_attackRect.x -= 8.0f;
         m_attackRect.y += 20.0f;
         m_attackRect.width = 15.0f; 
         m_attackRect.height = 55.0f; 
+        if (!IsMusicStreamPlaying(m_attackSound)) {
+            PlayMusicStream(m_attackSound);
+        }
+        UpdateMusicStream(m_attackSound); 
+    }
+    else {
+        if (IsMusicStreamPlaying(m_attackSound)) {
+            PauseMusicStream(m_attackSound);
+        }
     }
     drawAttackHitbox();
 
 }
 
+void Player::handleControllerAttack() {
+    
+    static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
+    m_attackSound.looping = true;
+
+    if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)){
+        m_idle = false;
+        m_direction = LEFT; 
+        m_attackRect.x -= 64.0f;
+        m_attackRect.width = 55.0f; 
+        m_attackRect.height = 15.0f;
+        if (!IsMusicStreamPlaying(m_attackSound)) {
+            PlayMusicStream(m_attackSound);
+        }
+        UpdateMusicStream(m_attackSound); 
+    }
+    else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)){
+        m_idle = false;
+        m_direction = RIGHT;
+        m_attackRect.x += 11.0f; 
+        m_attackRect.width = 55.0f;
+        m_attackRect.height = 15.0f;
+        if (!IsMusicStreamPlaying(m_attackSound)) {
+            PlayMusicStream(m_attackSound);
+        }
+        UpdateMusicStream(m_attackSound); 
+    }
+    else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_UP)){
+        m_idle = false;
+        m_direction = UP; 
+        m_attackRect.x -= 8.0f;
+        m_attackRect.y -= 40.0f;
+        m_attackRect.width = 15.0f;
+        m_attackRect.height = 55.0f;
+        if (!IsMusicStreamPlaying(m_attackSound)) {
+            PlayMusicStream(m_attackSound);
+        }
+        UpdateMusicStream(m_attackSound); 
+    }
+    else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)){
+        m_idle = false;
+        m_direction = IDLE; 
+        m_attackRect.x -= 8.0f;
+        m_attackRect.y += 20.0f;
+        m_attackRect.width = 15.0f; 
+        m_attackRect.height = 55.0f; 
+        if (!IsMusicStreamPlaying(m_attackSound)) {
+            PlayMusicStream(m_attackSound);
+        }
+        UpdateMusicStream(m_attackSound); 
+    }
+    else {
+        if (IsMusicStreamPlaying(m_attackSound)) {
+            PauseMusicStream(m_attackSound);
+        }
+    }
+
+    //right stick movement
+    m_axisXR = GetGamepadAxisMovement(0, GAMEPAD_AXIS_RIGHT_X);
+    m_axisYR = GetGamepadAxisMovement(0, GAMEPAD_AXIS_RIGHT_Y);
+
+    if (std::fabs(m_axisXR) > 0.1f) {
+        if(m_axisXR > 0.3f){
+            m_idle = false;
+            m_direction = RIGHT;
+            m_attackRect.x += 11.0f; 
+            m_attackRect.width = 55.0f;
+            m_attackRect.height = 15.0f;
+            if (!IsMusicStreamPlaying(m_attackSound)) {
+                PlayMusicStream(m_attackSound);
+            }
+            UpdateMusicStream(m_attackSound); 
+        }
+        else if(m_axisXR < -0.3f) {
+            m_idle = false;
+            m_direction = LEFT; 
+            m_attackRect.x -= 64.0f;
+            m_attackRect.width = 55.0f; 
+            m_attackRect.height = 15.0f;
+            if (!IsMusicStreamPlaying(m_attackSound)) {
+                PlayMusicStream(m_attackSound);
+            }
+            UpdateMusicStream(m_attackSound); 
+        }   
+    }
+    if (std::fabs(m_axisYR) > 0.1f) {
+        if(m_axisYR > 0.3f){
+            m_idle = false;
+            m_direction = IDLE; 
+            m_attackRect.x -= 8.0f;
+            m_attackRect.y += 20.0f;
+            m_attackRect.width = 15.0f; 
+            m_attackRect.height = 55.0f; 
+            if (!IsMusicStreamPlaying(m_attackSound)) {
+                PlayMusicStream(m_attackSound);
+            }
+            UpdateMusicStream(m_attackSound); 
+        }
+        else if(m_axisYR < -0.3f) {
+            m_idle = false;
+            m_direction = UP; 
+            m_attackRect.x -= 8.0f;
+            m_attackRect.y -= 40.0f;
+            m_attackRect.width = 15.0f;
+            m_attackRect.height = 55.0f;
+            if (!IsMusicStreamPlaying(m_attackSound)) {
+                PlayMusicStream(m_attackSound);
+            }
+            UpdateMusicStream(m_attackSound);
+        }
+    }
+    
+    drawAttackHitbox();
+}
+
 void Player::updateSprite() {
 
-    handleMovement();
-    handleAttack();
-    handleDash();
+    handleKeyboardMovement();
+    handleKeyboardDash();
+    handleKeyboardAttack();
+    if(IsGamepadAvailable(0)){
+        handleControllerMovement();
+        handleControllerDash();
+        handleControllerAttack();
+    }
     setState(m_direction);  
     animateSprite();
     drawSprite();
