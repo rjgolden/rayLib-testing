@@ -1,28 +1,22 @@
 #include "animation2.h"
 
 /*-------------------------------*/
-Animation::Animation(const char* filePath, uint8_t frameCount, float animationTime, float positionX, float positionY){
+Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY){
 
     // Load textures
     m_animationTextures[0] = LoadTexture(filePath);
 
     // Rectangles 
-    m_animationRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / (float)frameCount, (float)m_animationTextures[0].height }; 
-    m_hitboxRect = { 0.0f, 0.0f, (float)m_animationTextures[0].width / (float)frameCount, (float)m_animationTextures[0].height };
+    m_animationRect = { 0.0f, 0.0f, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(frameCount), static_cast<float>(m_animationTextures[0].height) }; 
+    m_hitboxRect = { 0.0f, 0.0f, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(frameCount), static_cast<float>(m_animationTextures[0].height) };
 
     // frame stuff
-    m_currentFrame = 0; // Starting frame
     m_frameCount = frameCount; // Number of frames in the idle animation
-    m_runningTime = 0.0f; 
-    m_animationTime = animationTime; // 83.33ms
-    m_updateTime = 1.0f / m_animationTime;
-    m_scale = 1.0f; 
-
+     
     // position and speed
     m_positionX = positionX; 
     m_positionY = positionY; 
 
-    std::cout << "Animation created\n";
 }
 
 Animation::Animation() {};
@@ -38,7 +32,7 @@ void Animation::animateSprite(){
     m_runningTime += deltaTime;
     if (m_runningTime >= m_updateTime){
         m_runningTime = 0.0f;
-        m_animationRect.x = (float)m_currentFrame * m_animationRect.width;
+        m_animationRect.x = static_cast<float>(m_currentFrame) * m_animationRect.width;
         m_currentFrame++;
         //if (m_currentFrame > m_frameCount) m_currentFrame = rand() % m_frameCount; // for random  
         if (m_currentFrame > m_frameCount) m_currentFrame = 0; 
@@ -46,15 +40,11 @@ void Animation::animateSprite(){
 }
 
 void Animation::drawSprite(){
-    DrawTexturePro(m_animationTextures[0], m_animationRect, {(float)m_positionX, (float)m_positionY, (float)m_animationTextures[0].width / (float)m_frameCount, (float)m_animationTextures[0].height}, {0.0f, 0.0f}, 0.0f, WHITE);
+    DrawTexturePro(m_animationTextures[0], m_animationRect, {static_cast<float>(m_positionX), static_cast<float>(m_positionY), static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, 0.0f, WHITE);
 }
 
 void Animation::drawHitbox(){
     DrawRectangleLines(m_positionX, m_positionY, m_hitboxRect.width, m_hitboxRect.height, RED);
-}
-
-void Animation::drawRectbox(){
-    DrawRectangleLines(m_positionX, m_positionY, m_animationRect.width, m_animationRect.height, GREEN);
 }
 
 void Animation::updateSprite(){
@@ -66,11 +56,11 @@ void Animation::updateSprite(){
 
 /*-------------GETTERS------------*/
 float Animation::getPositionX() { 
-    return m_positionX; 
+    return m_positionX;
 }
 
 float Animation::getPositionY() { 
-    return m_positionY; 
+    return m_positionY;
 }
 
 float Animation::getWidth() { 
@@ -79,6 +69,10 @@ float Animation::getWidth() {
 
 float Animation::getHeight() { 
     return m_hitboxRect.height; 
+}
+
+Vector2 Animation::getPosition() { 
+    return Vector2{m_positionX, m_positionY};
 }
 
 Rectangle Animation::getHitboxRect() { 

@@ -83,8 +83,8 @@ int main()
 
     // Load animations
     //Player hoodyAnimation("src/resources/hoodyIdleAnimation.png", "src/resources/hoodyRunAnimation.png", "src/resources/hoodyRunAnimation2.png", 6);
-    Animation gemstoneAnimation("src/resources/Animations/hoodyGemAnimation.png", 6, 500.0f, 500.0f);
-    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, rand() % 540, rand() % 360);
+    Animation gemstoneAnimation("../src/resources/Animations/coin_gold.png", 6, 500.0f, 500.0f);
+    Animation fireAnimation("../src/resources/Animations/fireSpriteAnimation.png", 6, rand() % 540, rand() % 360);
     Enemy enemyAnimation("src/resources/Animations/hoodyGuyEnemyAnimation.png", 6);
     Player captainAnimation("src/resources/Animations/Captain-Idle-Sheet.png", 
                             "src/resources/Animations/Captain-RunRight-Sheet.png", 

@@ -8,21 +8,22 @@
 class Animation {
 
     public: 
-        Animation(const char* filePath, uint8_t frameCount, float animationTime, float positionX, float positionY);
+        Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY);
         Animation();
-        ~Animation();
+        virtual ~Animation();
         
-        void animateSprite();
-        void drawSprite();
-        void drawHitbox();
-        void drawRectbox();
-        void updateSprite();
+        virtual void drawSprite();
+        virtual void updateSprite();
+        void animateSprite(); 
+        virtual void drawHitbox();
+    
 
         // GETTERS
         float getPositionX();
-        float getPositionY(); 
+        float getPositionY();
         float getWidth();
         float getHeight();
+        Vector2 getPosition();
         Rectangle getHitboxRect();
 
         // SETTERS
@@ -33,13 +34,13 @@ class Animation {
         Rectangle m_animationRect; // Source rectangle for the animation
         Rectangle m_hitboxRect; // Hitbox for the animation
 
-        uint8_t m_currentFrame; // Current frame of the animation
         uint8_t m_frameCount; 
-        float m_runningTime;  // Time accumulator for the animation
-        float m_updateTime; // Time between frame updates
-        float m_animationTime; // Time animtion plays for - default 12.0f 83.33ms
+        uint8_t m_currentFrame{0}; // Current frame of the animation
+        float m_runningTime{0.0f};  // Time accumulator for the animation
+        float m_animationTime{12.0f}; // Time animtion plays for - default 12.0f 83.33ms
+        float m_updateTime{1.0f/m_animationTime}; // Time between frame updates
+        float m_scale{1.0f};
         float m_positionX; 
         float m_positionY; 
-        float m_scale;
 
 };

@@ -26,37 +26,69 @@ float ToggleFullscreenWindow(){
 void init(){
     InitWindow(config::screenWidth, config::screenHeight, "Raylib Program");
     SetWindowMinSize(config::screenWidth, config::screenHeight);
-    SetTargetFPS(60);
+    SetTargetFPS(config::FPS);
+    SetWindowOpacity(0.5);  
     SetWindowIcon(LoadImage("src/resources/Textures/space.png")); 
 }
 
 void drawBackground(){
-    static Texture2D gameScreen = LoadTexture("src/resources/Textures/space.png");
-    DrawTextureEx(gameScreen, {0.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // UP
-    DrawTextureEx(gameScreen, {640.0f, 0.0f}, 0.0f, 1.0f, WHITE);   // RIGHT
-    DrawTextureEx(gameScreen, {0.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // DOWN
-    DrawTextureEx(gameScreen, {-640.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // LEFT
-    DrawTextureEx(gameScreen, {0.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // CENTER
-    DrawTextureEx(gameScreen, {640.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // TOP RIGHT
+    static Texture2D gameScreen = LoadTexture("src/resources/Textures/testScreen.png");
+    static Texture2D spaceText = LoadTexture("src/resources/Textures/space.png");
+
     DrawTextureEx(gameScreen, {-640.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // TOP LEFT
-    DrawTextureEx(gameScreen, {640.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // BOTTOM RIGHT
-    DrawTextureEx(gameScreen, {-640.0f, 360.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM LEFT
+
+    // ABOVE (top row)
+    DrawTextureEx(spaceText, {-640.0f, -720.0f}, 0.0f, 1.0f, WHITE);   // ABOVE TOP LEFT
+    DrawTextureEx(spaceText, {0.0f,    -720.0f}, 0.0f, 1.0f, WHITE);   // ABOVE TOP
+    DrawTextureEx(spaceText, {640.0f,  -720.0f}, 0.0f, 1.0f, WHITE);   // ABOVE TOP RIGHT
+
+    // LEFT SIDE
+    DrawTextureEx(spaceText, {-1280.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // LEFT OF TOP LEFT
+    DrawTextureEx(spaceText, {-1280.0f,   0.0f},  0.0f, 1.0f, WHITE);  // LEFT OF CENTER LEFT
+    DrawTextureEx(spaceText, {-1280.0f, 360.0f},  0.0f, 1.0f, WHITE);  // LEFT OF BOTTOM LEFT
+
+    // RIGHT SIDE
+    DrawTextureEx(spaceText, {1280.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // RIGHT OF TOP RIGHT
+    DrawTextureEx(spaceText, {1280.0f,   0.0f},  0.0f, 1.0f, WHITE);   // RIGHT OF CENTER RIGHT
+    DrawTextureEx(spaceText, {1280.0f, 360.0f},  0.0f, 1.0f, WHITE);   // RIGHT OF BOTTOM RIGHT
+
+    // BELOW (bottom row)
+    DrawTextureEx(spaceText, {-640.0f, 720.0f}, 0.0f, 1.0f, WHITE);    // BELOW BOTTOM LEFT
+    DrawTextureEx(spaceText, {0.0f,    720.0f}, 0.0f, 1.0f, WHITE);    // BELOW BOTTOM
+    DrawTextureEx(spaceText, {640.0f,  720.0f}, 0.0f, 1.0f, WHITE);    // BELOW BOTTOM RIGHT
+
+    // CORNERS
+    DrawTextureEx(spaceText, {-1280.0f, -720.0f}, 0.0f, 1.0f, WHITE);  // TOP LEFT CORNER
+    DrawTextureEx(spaceText, {1280.0f,  -720.0f}, 0.0f, 1.0f, WHITE);  // TOP RIGHT CORNER
+    DrawTextureEx(spaceText, {-1280.0f,  720.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM LEFT CORNER
+    DrawTextureEx(spaceText, {1280.0f,   720.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM RIGHT CORNER
+
+    //DrawTextureEx(top, {0.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // UP
+    //DrawTextureEx(right, {640.0f, 0.0f}, 0.0f, 1.0f, WHITE);   // RIGHT
+    //DrawTextureEx(bottom, {0.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // DOWN
+    //DrawTextureEx(left, {-640.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // LEFT
+    //DrawTextureEx(mid, {0.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // CENTER
+    //DrawTextureEx(topRight, {640.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // TOP RIGHT
+    //DrawTextureEx(mid, {640.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // BOTTOM RIGHT
+    //DrawTextureEx(mid, {-640.0f, 360.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM LEFT
+    //DrawTextureEx(gameScreen, {-640.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // TOP LEFT
+
 }
 
 int main(){ 
         
     //setup
     init();
-    float scale = 1.0f;  
-    float deltaTime = 0.0f;
-    float centerX = (float)config::screenWidth/2.0f;
-    float centerY = (float)config::screenHeight/2.0f;
+    float scale{1.0f};  
+    float deltaTime{0.0f};
+    float centerX = static_cast<float>(config::screenWidth)/2.0f;
+    float centerY = static_cast<float>(config::screenHeight)/2.0f;
 
     //animations & player
-    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, 12.0f, centerX, centerY);
-    Animation coinAnimation("src/resources/Animations/coin_gold.png", 8, 14.0f, centerX, centerY);
-    Player playerAnimation("src/resources/Animations/idle.png", "src/resources/Animations/runLeft.png", "src/resources/Animations/runRight.png", 
-                            "src/resources/Animations/runUp.png", "src/resources/Animations/runDown.png", 6);
+    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, centerX, centerY);
+    Animation coinAnimation("src/resources/Animations/coin_gold.png", 8, centerX, centerY);
+    Player playerAnimation("src/resources/Animations/eyeball-Idle.png", "src/resources/Animations/eyeballMoveLeft.png", "src/resources/Animations/eyeballMoveRight.png", 
+                            "src/resources/Animations/eyeballMoveUp.png", 8);
 
     // sound stuff
     SoundSystem soundSystem;  
@@ -66,7 +98,7 @@ int main(){
     // music
     Music music = LoadMusicStream("src/resources/Sounds/fireSound.mp3");
     PlayMusicStream(music);
-    SetMusicVolume(music, 0.05f);
+    SetMusicVolume(music, 0.01f);
     music.looping = true;
 
     // Camera
@@ -80,8 +112,8 @@ int main(){
 
         if(IsKeyPressed(KEY_F)) {
             scale = ToggleFullscreenWindow();
-            centerX = ((float)config::screenWidth*scale)/2.0f;
-            centerY = ((float)config::screenHeight*scale)/2.0f;
+            centerX = (static_cast<float>(config::screenWidth)*scale)/2.0f;
+            centerY = (static_cast<float>(config::screenHeight)*scale)/2.0f;
             gameCamera.camera.zoom = scale;
             gameCamera.camera.offset = {centerX, centerY};
             std::cout << "CenterX: " << centerX << "\n";
@@ -98,7 +130,7 @@ int main(){
         }
 
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-            Vector2 worldPos = GetScreenToWorld2D((Vector2){(float)GetMouseX(), (float)GetMouseY()}, gameCamera.camera);
+            Vector2 worldPos = GetScreenToWorld2D({static_cast<float>(GetMouseX()), static_cast<float>(GetMouseY())}, gameCamera.camera);
             Vector2 position = { worldPos.x - fireAnimation.getWidth()/2.0f, worldPos.y - fireAnimation.getHeight()/2.0f };
             coinAnimation.setPosition(position);
             PlaySound(coin);
@@ -108,9 +140,9 @@ int main(){
         int intFPS = GetFPS();
         std::string stringFPS = std::to_string(intFPS);
         const char* FPS = stringFPS.c_str();
-
+        
         BeginDrawing();
-            ClearBackground(RED);                        
+            ClearBackground(BLACK);                        
             BeginMode2D(gameCamera.camera);
                 drawBackground();
                 DrawText(FPS, 600, 0, 50, RED); 

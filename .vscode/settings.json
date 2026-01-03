@@ -56,5 +56,6 @@
 		"ctime": "cpp",
 		"iostream": "cpp",
 		"istream": "cpp"
-	}
+	},
+	"C_Cpp.errorSquiggles": "disabled"
 }
