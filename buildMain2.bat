@@ -6,7 +6,7 @@ echo Building raylib project...
 REM Define main variables
 SET MAKE_PATH=C:/raylib/w64devkit/bin/mingw32-make.exe
 SET RAYLIB_PATH=C:/raylib/raylib
-SET PROJECT_NAME=main
+SET PROJECT_NAME=Game
 SET SOURCE_FILES="src/main2.cpp src/animation2.cpp src/player2.cpp src/soundSystem.cpp src/gameCamera.cpp src/utilities.cpp"
 
 REM Check if we want a debug build

@@ -1,7 +1,7 @@
 #include "animation2.h"
 
 /*-------------------------------*/
-Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY){
+Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY, bool random){
 
     // Load textures
     m_animationTextures[0] = LoadTexture(filePath);
@@ -12,7 +12,8 @@ Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, 
 
     // frame stuff
     m_frameCount = frameCount; // Number of frames in the idle animation
-     
+    m_random = random;
+    
     // position and speed
     m_positionX = positionX; 
     m_positionY = positionY; 
@@ -39,6 +40,17 @@ void Animation::animateSprite(){
     }
 }
 
+void Animation::animateSpriteRandom(){
+    float deltaTime = GetFrameTime();
+    m_runningTime += deltaTime;
+    if (m_runningTime >= m_updateTime){
+        m_runningTime = 0.0f;
+        m_animationRect.x = static_cast<float>(m_currentFrame) * m_animationRect.width;
+        m_currentFrame++;
+        if (m_currentFrame > m_frameCount) m_currentFrame = rand() % m_frameCount; // for random  
+    }
+}
+
 void Animation::drawSprite(){
     DrawTexturePro(m_animationTextures[0], m_animationRect, {static_cast<float>(m_positionX), static_cast<float>(m_positionY), static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, 0.0f, WHITE);
 }
@@ -48,7 +60,8 @@ void Animation::drawHitbox(){
 }
 
 void Animation::updateSprite(){
-    animateSprite();
+    if(m_random) animateSpriteRandom();
+    else animateSprite();
     drawSprite();
     //drawRectbox();
     //drawHitbox();

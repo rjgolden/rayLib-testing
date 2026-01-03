@@ -1,21 +1,20 @@
 #include "player2.h"
 
 /*-------------------------------*/
-Player::Player(const char* filePath, const char* filePath2, const char* filePath3, const char* filePath4, uint8_t frameCount) {
+Player::Player() {
     
     // vector Derived from animation class
-    m_animationTextures[0] = LoadTexture(filePath); 
-    m_animationTextures[1] = LoadTexture(filePath2);
-    m_animationTextures[2] = LoadTexture(filePath3);
-    m_animationTextures[3] = LoadTexture(filePath4);
+    m_animationTextures[0] = LoadTexture("src/resources/Animations/eyeball-Idle.png"); 
+    m_animationTextures[1] = LoadTexture("src/resources/Animations/eyeballMoveLeft.png");
+    m_animationTextures[2] = LoadTexture("src/resources/Animations/eyeballMoveRight.png");
+    m_animationTextures[3] = LoadTexture("src/resources/Animations/eyeballMoveUp.png");
     m_currentTexture = &m_animationTextures[0]; // default is idle
     
-    // Rectangles - Derived from animation class
-    m_animationRect = { 0.0f, 0.0f, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(frameCount), static_cast<float>(m_animationTextures[0].height) }; 
-    m_hitboxRect = { 0.0f, 0.0f, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(frameCount), static_cast<float>(m_animationTextures[0].height) };
+    m_frameCount = 8;
 
-    // frame stuff - All derived from animation class
-    m_frameCount = frameCount;  
+    // Rectangles - Derived from animation class
+    m_animationRect = { 0.0f, 0.0f, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height) }; 
+    m_hitboxRect = { 0.0f, 0.0f, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height) };
 
     // position and speed, Variables derived from animation class
     m_positionX = static_cast<float>(config::screenWidth) / 2.0f;
@@ -442,7 +441,7 @@ void Player::updateSprite() {
 
 }
 
-// GETTERS
+/*-------------GETTERS------------*/
 float Player::getPlayerSpeed(){
     return m_playerSpeed;
 }

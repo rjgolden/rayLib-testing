@@ -7,7 +7,7 @@ class Player : public Animation {
 
     public:
 
-        Player(const char* filePath, const char* filePath2, const char* filePath3, const char* filePath4, uint8_t frameCount);
+        Player();
         ~Player();
 
         void drawSprite() override;

@@ -8,16 +8,16 @@
 class Animation {
 
     public: 
-        Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY);
+        Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY, bool random);
         Animation();
         virtual ~Animation();
         
         virtual void drawSprite();
         virtual void updateSprite();
-        void animateSprite(); 
         virtual void drawHitbox();
+        void animateSprite();
+        void animateSpriteRandom();
     
-
         // GETTERS
         float getPositionX();
         float getPositionY();
@@ -36,6 +36,7 @@ class Animation {
 
         uint8_t m_frameCount{0}; 
         uint8_t m_currentFrame{0}; // Current frame of the animation
+        bool m_random{false};
         float m_runningTime{0.0f};  // Time accumulator for the animation
         float m_animationTime{12.0f}; // Time animtion plays for - default 12.0f 83.33ms
         float m_updateTime{1.0f/m_animationTime}; // Time between frame updates

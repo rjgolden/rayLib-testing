@@ -11,11 +11,11 @@ int main(){
     float centerY = static_cast<float>(config::screenHeight)/2.0f;
 
     //animations
-    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, centerX, centerY);
-    Animation coinAnimation("src/resources/Animations/coin_gold.png", 8, centerX, centerY);
+    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, centerX, centerY, true);
+    Animation coinAnimation("src/resources/Animations/coin_gold.png", 8, centerX, centerY, false);
 
     //player
-    Player playerAnimation("src/resources/Animations/eyeball-Idle.png", "src/resources/Animations/eyeballMoveLeft.png", "src/resources/Animations/eyeballMoveRight.png", "src/resources/Animations/eyeballMoveUp.png", 8);
+    Player playerAnimation;
 
     // sound stuff
     SoundSystem soundSystem;  
@@ -42,8 +42,6 @@ int main(){
             centerY = (static_cast<float>(config::screenHeight)*scale)/2.0f;
             gameCamera.camera.zoom = scale;
             gameCamera.camera.offset = {centerX, centerY};
-            std::cout << "CenterX: " << centerX << "\n";
-            std::cout << "CenterY: " << centerY << "\n";
         }
         
         if(IsKeyDown(KEY_C)) {
