@@ -8,7 +8,7 @@ void Utilities::init(){
 }
 
 void Utilities::drawBackground(){
-    static Texture2D gameScreen = LoadTexture("src/resources/Textures/testScreen.png");
+    static Texture2D gameScreen = LoadTexture("src/resources/Textures/grassy.png");
     static Texture2D spaceText = LoadTexture("src/resources/Textures/space.png");
 
     DrawTextureEx(gameScreen, {-640.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // TOP LEFT
@@ -54,21 +54,20 @@ void Utilities::drawBackground(){
 float Utilities::toggleFullScreenWindow(){
     /*---------------------------------| 
     |  Only allow 16:9 raito           |
-    |  (640x320) scale = 1.0f;         |
-    |  (1280x640) scale = 2.0f;        |
-    |  (1920x1080) scale = 3.0f, etc.  |
+    |  (480x270) scale = 1.0f;         |
+    |  (1920x1080) scale = 4.0f.       |
     |---------------------------------*/
 
     if(!IsWindowFullscreen()){
         int monitor = GetCurrentMonitor();
         SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
         ToggleFullscreen();
-        return 3.0f; // 1920x1080 default fullscreen scale
+        return 4.0f; // 1920x1080 default fullscreen scale
     } 
     else{
         ToggleFullscreen();
         SetWindowSize(config::screenWidth, config::screenHeight);
-        return 1.0f; // 640x360 default scale
+        return 1.0f; // 480x270 default scale
     }
 
 }

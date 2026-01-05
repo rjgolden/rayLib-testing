@@ -5,10 +5,11 @@ int main(){
     //setup
     Utilities utils;
     utils.init();
+    
     float scale{1.0f};  
     float deltaTime{0.0f};
-    float centerX = static_cast<float>(config::screenWidth)/2.0f;
-    float centerY = static_cast<float>(config::screenHeight)/2.0f;
+    float centerX = static_cast<float>(config::halfScreenWidth);
+    float centerY = static_cast<float>(config::halfScreenWidth);
 
     //animations
     Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, centerX, centerY, true);
@@ -17,18 +18,18 @@ int main(){
     //player
     Player playerAnimation;
 
-    // sound stuff
+    //camera
+    GameCamera gameCamera;
+
+    //sound stuff
     SoundSystem soundSystem;  
     Sound coin = LoadSound("src/resources/Sounds/coin.mp3");
 
-    // music
+    //music
     Music music = LoadMusicStream("src/resources/Sounds/fireSound.mp3");
     PlayMusicStream(music);
     SetMusicVolume(music, 0.01f);
     music.looping = true;
-
-    // Camera
-    GameCamera gameCamera;
 
     while (!WindowShouldClose())
     {   

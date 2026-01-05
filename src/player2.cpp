@@ -17,10 +17,8 @@ Player::Player() {
     m_hitboxRect = { 0.0f, 0.0f, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height) };
 
     // position and speed, Variables derived from animation class
-    m_positionX = static_cast<float>(config::screenWidth) / 2.0f;
-    m_positionY = static_cast<float>(config::screenHeight) / 2.0f; 
-
-    // attack
+    m_positionX = static_cast<float>(config::halfScreenWidth);
+    m_positionY = static_cast<float>(config::halfScreenHeight); 
 
 }
 
@@ -34,7 +32,7 @@ Player::~Player() {
 
 /*-------------------------------*/
 void Player::drawSprite() {
-    DrawTexturePro(*m_currentTexture, m_animationRect, {static_cast<float>(m_positionX), static_cast<float>(m_positionY), static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, 0.0f, WHITE);
+    DrawTexturePro(*m_currentTexture, m_animationRect, {static_cast<float>(m_positionX), static_cast<float>(m_positionY), static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, m_rotation, WHITE);
 }
 
 void Player::drawHitbox() {
@@ -246,6 +244,7 @@ void Player::handleControllerDash(){
 void Player::handleKeyboardAttack() {
 
     static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
+    static Animation beam("src/resources/Animations/defaultBeam.png", 8, 0.0f, 0.0f, false);
     m_attackSound.looping = true;
 
     //many mahgic numbers here  - will fix in future
@@ -260,6 +259,9 @@ void Player::handleKeyboardAttack() {
         m_attackRect.x -= 64.0f;
         m_attackRect.width = 55.0f; 
         m_attackRect.height = 15.0f;
+        beam.setPosition(Vector2({m_attackRect.x, m_attackRect.y}));
+        beam.setRotation(180.0f);
+        beam.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -271,6 +273,9 @@ void Player::handleKeyboardAttack() {
         m_attackRect.x += 11.0f; 
         m_attackRect.width = 55.0f;
         m_attackRect.height = 15.0f;
+        beam.setPosition(Vector2({m_attackRect.x, m_attackRect.y}));
+        beam.setRotation(0.0f);
+        beam.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -283,6 +288,9 @@ void Player::handleKeyboardAttack() {
         m_attackRect.y -= 40.0f;
         m_attackRect.width = 15.0f;
         m_attackRect.height = 55.0f;
+        beam.setPosition(Vector2({m_attackRect.x, m_attackRect.y}));
+        beam.setRotation(90.0f);
+        beam.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -294,7 +302,10 @@ void Player::handleKeyboardAttack() {
         m_attackRect.x -= 8.0f;
         m_attackRect.y += 20.0f;
         m_attackRect.width = 15.0f; 
-        m_attackRect.height = 55.0f; 
+        m_attackRect.height = 55.0f;
+        beam.setPosition(Vector2({m_attackRect.x, m_attackRect.y}));
+        beam.setRotation(270.0f);
+        beam.updateSprite(); 
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }

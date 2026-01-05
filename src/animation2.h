@@ -27,7 +27,8 @@ class Animation {
         Rectangle getHitboxRect();
 
         // SETTERS
-        void setPosition(Vector2 &position);
+        void setPosition(Vector2 position);
+        void setRotation(float rotation);
         
     protected:
         std::array<Texture2D, 10> m_animationTextures; // Textures for the animation (idle and moving left and right for now)
@@ -43,5 +44,6 @@ class Animation {
         float m_scale{1.0f};
         float m_positionX{0.0f}; 
         float m_positionY{0.0f}; 
+        float m_rotation{0.0f};
 
 };

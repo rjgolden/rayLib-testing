@@ -52,7 +52,7 @@ void Animation::animateSpriteRandom(){
 }
 
 void Animation::drawSprite(){
-    DrawTexturePro(m_animationTextures[0], m_animationRect, {static_cast<float>(m_positionX), static_cast<float>(m_positionY), static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, 0.0f, WHITE);
+    DrawTexturePro(m_animationTextures[0], m_animationRect, {static_cast<float>(m_positionX), static_cast<float>(m_positionY), static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, m_rotation, WHITE);
 }
 
 void Animation::drawHitbox(){
@@ -93,7 +93,11 @@ Rectangle Animation::getHitboxRect() {
 }
 
 /*-------------SETTERS------------*/
-void Animation::setPosition(Vector2 &position){
+void Animation::setPosition(Vector2 position){
     m_positionX = position.x;
     m_positionY = position.y;
+}
+
+void Animation::setRotation(float rotation){
+    m_rotation = rotation;
 }
