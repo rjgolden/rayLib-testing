@@ -52,11 +52,11 @@ void Animation::animateSpriteRandom(){
 }
 
 void Animation::drawSprite(){
-    DrawTexturePro(m_animationTextures[0], m_animationRect, {static_cast<float>(m_positionX), static_cast<float>(m_positionY), static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, m_rotation, WHITE);
+    DrawTexturePro(m_animationTextures[0], m_animationRect, {m_positionX, m_positionY, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, m_rotation, WHITE);
 }
 
 void Animation::drawHitbox(){
-    DrawRectangleLines(m_positionX, m_positionY, m_hitboxRect.width, m_hitboxRect.height, RED);
+    Utilities::DrawRectangleLinesPro({m_positionX, m_positionY, m_hitboxRect.width, m_hitboxRect.height}, {0.0f, 0.0f}, m_rotation, RED);
 }
 
 void Animation::updateSprite(){

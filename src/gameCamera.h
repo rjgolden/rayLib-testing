@@ -1,6 +1,7 @@
 #pragma once
 
-#include "includes.h"
+#include <raylib.h>
+#include "config.h"
 
 class GameCamera {
 

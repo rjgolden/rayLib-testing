@@ -74,82 +74,43 @@ namespace Utilities {
 
     }
 
-    void DrawRectangleLinesPro(Rectangle rec, Vector2 origin, float rotation, Color color){
-        Vector2 topLeft = { 0 };
-        Vector2 topRight = { 0 };
-        Vector2 bottomLeft = { 0 };
-        Vector2 bottomRight = { 0 };
+    void DrawRectangleLinesPro(Rectangle rec, Vector2 origin, float rotation, Color color)
+    {
+        Vector2 corners[4];
 
-        // Only calculate rotation if needed
-        if (rotation == 0.0f)
+        // Rectangle corners relative to origin
+        Vector2 local[4] = {
+            { -origin.x, -origin.y },                          // top-left
+            { rec.width - origin.x, -origin.y },               // top-right
+            { rec.width - origin.x, rec.height - origin.y },   // bottom-right
+            { -origin.x, rec.height - origin.y }               // bottom-left
+        };
+
+        float rad = rotation*DEG2RAD;
+        float sinR = sinf(rad);
+        float cosR = cosf(rad);
+
+        for (int i = 0; i < 4; i++)
         {
-            float x = rec.x - origin.x;
-            float y = rec.y - origin.y;
-            topLeft = (Vector2){ x, y };
-            topRight = (Vector2){ x + rec.width, y };
-            bottomLeft = (Vector2){ x, y + rec.height };
-            bottomRight = (Vector2){ x + rec.width, y + rec.height };
-        }
-        else
-        {
-            float sinRotation = sinf(rotation*DEG2RAD);
-            float cosRotation = cosf(rotation*DEG2RAD);
-            float x = rec.x;
-            float y = rec.y;
-            float dx = -origin.x;
-            float dy = -origin.y;
-
-            topLeft.x = x + dx*cosRotation - dy*sinRotation;
-            topLeft.y = y + dx*sinRotation + dy*cosRotation;
-
-            topRight.x = x + (dx + rec.width)*cosRotation - dy*sinRotation;
-            topRight.y = y + (dx + rec.width)*sinRotation + dy*cosRotation;
-
-            bottomLeft.x = x + dx*cosRotation - (dy + rec.height)*sinRotation;
-            bottomLeft.y = y + dx*sinRotation + (dy + rec.height)*cosRotation;
-
-            bottomRight.x = x + (dx + rec.width)*cosRotation - (dy + rec.height)*sinRotation;
-            bottomRight.y = y + (dx + rec.width)*sinRotation + (dy + rec.height)*cosRotation;
+            corners[i].x = rec.x + local[i].x*cosR - local[i].y*sinR;
+            corners[i].y = rec.y + local[i].x*sinR + local[i].y*cosR;
         }
 
-    #if defined(SUPPORT_QUADS_DRAW_MODE)
-        rlSetTexture(texShapes.id);
-
-        rlBegin(RL_QUADS);
-
-            rlNormal3f(0.0f, 0.0f, 1.0f);
+        rlBegin(RL_LINES);
             rlColor4ub(color.r, color.g, color.b, color.a);
 
-            rlTexCoord2f(texShapesRec.x/texShapes.width, texShapesRec.y/texShapes.height);
-            rlVertex2f(topLeft.x, topLeft.y);
+            rlVertex2f(corners[0].x, corners[0].y);
+            rlVertex2f(corners[1].x, corners[1].y);
 
-            rlTexCoord2f(texShapesRec.x/texShapes.width, (texShapesRec.y + texShapesRec.height)/texShapes.height);
-            rlVertex2f(bottomLeft.x, bottomLeft.y);
+            rlVertex2f(corners[1].x, corners[1].y);
+            rlVertex2f(corners[2].x, corners[2].y);
 
-            rlTexCoord2f((texShapesRec.x + texShapesRec.width)/texShapes.width, (texShapesRec.y + texShapesRec.height)/texShapes.height);
-            rlVertex2f(bottomRight.x, bottomRight.y);
+            rlVertex2f(corners[2].x, corners[2].y);
+            rlVertex2f(corners[3].x, corners[3].y);
 
-            rlTexCoord2f((texShapesRec.x + texShapesRec.width)/texShapes.width, texShapesRec.y/texShapes.height);
-            rlVertex2f(topRight.x, topRight.y);
-
+            rlVertex2f(corners[3].x, corners[3].y);
+            rlVertex2f(corners[0].x, corners[0].y);
         rlEnd();
-
-        rlSetTexture(0);
-    #else
-        rlBegin(RL_TRIANGLES);
-
-            rlColor4ub(color.r, color.g, color.b, color.a);
-
-            rlVertex2f(topLeft.x, topLeft.y);
-            rlVertex2f(bottomLeft.x, bottomLeft.y);
-            rlVertex2f(topRight.x, topRight.y);
-
-            rlVertex2f(topRight.x, topRight.y);
-            rlVertex2f(bottomLeft.x, bottomLeft.y);
-            rlVertex2f(bottomRight.x, bottomRight.y);
-
-        rlEnd();
-    #endif
     }
 
 }

@@ -1,4 +1,9 @@
 #include "utilities.h"
+#include "player2.h"
+#include "animation2.h"
+#include "soundSystem.h"
+#include "config.h"
+#include "gameCamera.h"
 
 int main(){ 
         
@@ -67,7 +72,6 @@ int main(){
                 fireAnimation.updateSprite();
                 coinAnimation.updateSprite();
                 playerAnimation.updateSprite();
-                DrawRectanglePro({0.0f, 0.0f, 200.0f, 100.0f}, {0.0f}, 0.0f, RED);
             EndMode2D();
         EndDrawing();
     }      

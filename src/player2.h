@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cmath>
 #include "animation2.h"
 #include "config.h"
@@ -25,7 +26,7 @@ class Player : public Animation {
         Rectangle getAttackRect();
         void drawAttackHitbox();
 
-        enum {IDLE,LEFT,RIGHT,UP};
+        enum {IDLE,LEFT,RIGHT,UP,DOWN};
 
     private:
     

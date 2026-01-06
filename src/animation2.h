@@ -1,15 +1,16 @@
 #pragma once
 
-#include "raylib.h"
-#include "rlgl.h"
+#include <raylib.h>
 #include <iostream>
 #include <array>
 #include <cstdint>
+#include <string>
 #include "utilities.h"
 
 class Animation {
 
     public: 
+
         Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY, bool random);
         Animation();
         virtual ~Animation();
@@ -33,6 +34,7 @@ class Animation {
         void setRotation(float rotation);
         
     protected:
+
         std::array<Texture2D, 10> m_animationTextures; // Textures for the animation (idle and moving left and right for now)
         Rectangle m_animationRect{0.0f}; // Source rectangle for the animation
         Rectangle m_hitboxRect{0.0f}; // Hitbox for the animation

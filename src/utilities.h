@@ -1,5 +1,9 @@
 #pragma once
-#include "includes.h"
+
+#include <raylib.h>
+#include <rlgl.h>
+#include <cmath>
+#include "config.h"
 
 namespace Utilities {
 
