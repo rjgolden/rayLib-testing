@@ -1,9 +1,11 @@
 #pragma once
 
-#include <raylib.h>
+#include "raylib.h"
+#include "rlgl.h"
 #include <iostream>
 #include <array>
 #include <cstdint>
+#include "utilities.h"
 
 class Animation {
 

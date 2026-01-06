@@ -1,73 +1,155 @@
 #include "utilities.h"
 
-void Utilities::init(){
-    InitWindow(config::screenWidth, config::screenHeight, "Raylib Program");
-    SetWindowMinSize(config::screenWidth, config::screenHeight);
-    SetTargetFPS(config::FPS);  
-    SetWindowIcon(LoadImage("src/resources/Textures/space.png")); 
-}
+namespace Utilities {
 
-void Utilities::drawBackground(){
-    static Texture2D gameScreen = LoadTexture("src/resources/Textures/grassy.png");
-    static Texture2D spaceText = LoadTexture("src/resources/Textures/space.png");
+    void init(){
+        InitWindow(config::screenWidth, config::screenHeight, "Raylib Program");
+        SetWindowMinSize(config::screenWidth, config::screenHeight);
+        SetTargetFPS(config::FPS);  
+        SetWindowIcon(LoadImage("src/resources/Textures/space.png")); 
+    }
 
-    DrawTextureEx(gameScreen, {-640.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // TOP LEFT
+    void drawBackground(){
+        static Texture2D gameScreen = LoadTexture("src/resources/Textures/grassy.png");
+        static Texture2D spaceText = LoadTexture("src/resources/Textures/space.png");
 
-    // ABOVE (top row)
-    DrawTextureEx(spaceText, {-640.0f, -720.0f}, 0.0f, 1.0f, WHITE);   // ABOVE TOP LEFT
-    DrawTextureEx(spaceText, {0.0f,    -720.0f}, 0.0f, 1.0f, WHITE);   // ABOVE TOP
-    DrawTextureEx(spaceText, {640.0f,  -720.0f}, 0.0f, 1.0f, WHITE);   // ABOVE TOP RIGHT
+        DrawTextureEx(gameScreen, {-640.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // TOP LEFT
 
-    // LEFT SIDE
-    DrawTextureEx(spaceText, {-1280.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // LEFT OF TOP LEFT
-    DrawTextureEx(spaceText, {-1280.0f,   0.0f},  0.0f, 1.0f, WHITE);  // LEFT OF CENTER LEFT
-    DrawTextureEx(spaceText, {-1280.0f, 360.0f},  0.0f, 1.0f, WHITE);  // LEFT OF BOTTOM LEFT
+        // ABOVE (top row)
+        DrawTextureEx(spaceText, {-640.0f, -720.0f}, 0.0f, 1.0f, WHITE);   // ABOVE TOP LEFT
+        DrawTextureEx(spaceText, {0.0f,    -720.0f}, 0.0f, 1.0f, WHITE);   // ABOVE TOP
+        DrawTextureEx(spaceText, {640.0f,  -720.0f}, 0.0f, 1.0f, WHITE);   // ABOVE TOP RIGHT
 
-    // RIGHT SIDE
-    DrawTextureEx(spaceText, {1280.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // RIGHT OF TOP RIGHT
-    DrawTextureEx(spaceText, {1280.0f,   0.0f},  0.0f, 1.0f, WHITE);   // RIGHT OF CENTER RIGHT
-    DrawTextureEx(spaceText, {1280.0f, 360.0f},  0.0f, 1.0f, WHITE);   // RIGHT OF BOTTOM RIGHT
+        // LEFT SIDE
+        DrawTextureEx(spaceText, {-1280.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // LEFT OF TOP LEFT
+        DrawTextureEx(spaceText, {-1280.0f,   0.0f},  0.0f, 1.0f, WHITE);  // LEFT OF CENTER LEFT
+        DrawTextureEx(spaceText, {-1280.0f, 360.0f},  0.0f, 1.0f, WHITE);  // LEFT OF BOTTOM LEFT
 
-    // BELOW (bottom row)
-    DrawTextureEx(spaceText, {-640.0f, 720.0f}, 0.0f, 1.0f, WHITE);    // BELOW BOTTOM LEFT
-    DrawTextureEx(spaceText, {0.0f,    720.0f}, 0.0f, 1.0f, WHITE);    // BELOW BOTTOM
-    DrawTextureEx(spaceText, {640.0f,  720.0f}, 0.0f, 1.0f, WHITE);    // BELOW BOTTOM RIGHT
+        // RIGHT SIDE
+        DrawTextureEx(spaceText, {1280.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // RIGHT OF TOP RIGHT
+        DrawTextureEx(spaceText, {1280.0f,   0.0f},  0.0f, 1.0f, WHITE);   // RIGHT OF CENTER RIGHT
+        DrawTextureEx(spaceText, {1280.0f, 360.0f},  0.0f, 1.0f, WHITE);   // RIGHT OF BOTTOM RIGHT
 
-    // CORNERS
-    DrawTextureEx(spaceText, {-1280.0f, -720.0f}, 0.0f, 1.0f, WHITE);  // TOP LEFT CORNER
-    DrawTextureEx(spaceText, {1280.0f,  -720.0f}, 0.0f, 1.0f, WHITE);  // TOP RIGHT CORNER
-    DrawTextureEx(spaceText, {-1280.0f,  720.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM LEFT CORNER
-    DrawTextureEx(spaceText, {1280.0f,   720.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM RIGHT CORNER
+        // BELOW (bottom row)
+        DrawTextureEx(spaceText, {-640.0f, 720.0f}, 0.0f, 1.0f, WHITE);    // BELOW BOTTOM LEFT
+        DrawTextureEx(spaceText, {0.0f,    720.0f}, 0.0f, 1.0f, WHITE);    // BELOW BOTTOM
+        DrawTextureEx(spaceText, {640.0f,  720.0f}, 0.0f, 1.0f, WHITE);    // BELOW BOTTOM RIGHT
 
-    //DrawTextureEx(top, {0.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // UP
-    //DrawTextureEx(right, {640.0f, 0.0f}, 0.0f, 1.0f, WHITE);   // RIGHT
-    //DrawTextureEx(bottom, {0.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // DOWN
-    //DrawTextureEx(left, {-640.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // LEFT
-    //DrawTextureEx(mid, {0.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // CENTER
-    //DrawTextureEx(topRight, {640.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // TOP RIGHT
-    //DrawTextureEx(mid, {640.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // BOTTOM RIGHT
-    //DrawTextureEx(mid, {-640.0f, 360.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM LEFT
-    //DrawTextureEx(gameScreen, {-640.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // TOP LEFT
+        // CORNERS
+        DrawTextureEx(spaceText, {-1280.0f, -720.0f}, 0.0f, 1.0f, WHITE);  // TOP LEFT CORNER
+        DrawTextureEx(spaceText, {1280.0f,  -720.0f}, 0.0f, 1.0f, WHITE);  // TOP RIGHT CORNER
+        DrawTextureEx(spaceText, {-1280.0f,  720.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM LEFT CORNER
+        DrawTextureEx(spaceText, {1280.0f,   720.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM RIGHT CORNER
 
-}
+        //DrawTextureEx(top, {0.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // UP
+        //DrawTextureEx(right, {640.0f, 0.0f}, 0.0f, 1.0f, WHITE);   // RIGHT
+        //DrawTextureEx(bottom, {0.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // DOWN
+        //DrawTextureEx(left, {-640.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // LEFT
+        //DrawTextureEx(mid, {0.0f, 0.0f}, 0.0f, 1.0f, WHITE);  // CENTER
+        //DrawTextureEx(topRight, {640.0f, -360.0f}, 0.0f, 1.0f, WHITE);  // TOP RIGHT
+        //DrawTextureEx(mid, {640.0f, 360.0f}, 0.0f, 1.0f, WHITE);   // BOTTOM RIGHT
+        //DrawTextureEx(mid, {-640.0f, 360.0f}, 0.0f, 1.0f, WHITE);  // BOTTOM LEFT
+        //DrawTextureEx(gameScreen, {-640.0f, -360.0f}, 0.0f, 1.0f, WHITE);   // TOP LEFT
 
-float Utilities::toggleFullScreenWindow(){
-    /*---------------------------------| 
-    |  Only allow 16:9 raito           |
-    |  (480x270) scale = 1.0f;         |
-    |  (1920x1080) scale = 4.0f.       |
-    |---------------------------------*/
+    }
 
-    if(!IsWindowFullscreen()){
-        int monitor = GetCurrentMonitor();
-        SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
-        ToggleFullscreen();
-        return 4.0f; // 1920x1080 default fullscreen scale
-    } 
-    else{
-        ToggleFullscreen();
-        SetWindowSize(config::screenWidth, config::screenHeight);
-        return 1.0f; // 480x270 default scale
+    float toggleFullScreenWindow(){
+        /*---------------------------------| 
+        |  Only allow 16:9 raito           |
+        |  (480x270) scale = 1.0f;         |
+        |  (1920x1080) scale = 4.0f.       |
+        |---------------------------------*/
+
+        if(!IsWindowFullscreen()){
+            int monitor = GetCurrentMonitor();
+            SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
+            ToggleFullscreen();
+            return 4.0f; // 1920x1080 default fullscreen scale
+        } 
+        else{
+            ToggleFullscreen();
+            SetWindowSize(config::screenWidth, config::screenHeight);
+            return 1.0f; // 480x270 default scale
+        }
+
+    }
+
+    void DrawRectangleLinesPro(Rectangle rec, Vector2 origin, float rotation, Color color){
+        Vector2 topLeft = { 0 };
+        Vector2 topRight = { 0 };
+        Vector2 bottomLeft = { 0 };
+        Vector2 bottomRight = { 0 };
+
+        // Only calculate rotation if needed
+        if (rotation == 0.0f)
+        {
+            float x = rec.x - origin.x;
+            float y = rec.y - origin.y;
+            topLeft = (Vector2){ x, y };
+            topRight = (Vector2){ x + rec.width, y };
+            bottomLeft = (Vector2){ x, y + rec.height };
+            bottomRight = (Vector2){ x + rec.width, y + rec.height };
+        }
+        else
+        {
+            float sinRotation = sinf(rotation*DEG2RAD);
+            float cosRotation = cosf(rotation*DEG2RAD);
+            float x = rec.x;
+            float y = rec.y;
+            float dx = -origin.x;
+            float dy = -origin.y;
+
+            topLeft.x = x + dx*cosRotation - dy*sinRotation;
+            topLeft.y = y + dx*sinRotation + dy*cosRotation;
+
+            topRight.x = x + (dx + rec.width)*cosRotation - dy*sinRotation;
+            topRight.y = y + (dx + rec.width)*sinRotation + dy*cosRotation;
+
+            bottomLeft.x = x + dx*cosRotation - (dy + rec.height)*sinRotation;
+            bottomLeft.y = y + dx*sinRotation + (dy + rec.height)*cosRotation;
+
+            bottomRight.x = x + (dx + rec.width)*cosRotation - (dy + rec.height)*sinRotation;
+            bottomRight.y = y + (dx + rec.width)*sinRotation + (dy + rec.height)*cosRotation;
+        }
+
+    #if defined(SUPPORT_QUADS_DRAW_MODE)
+        rlSetTexture(texShapes.id);
+
+        rlBegin(RL_QUADS);
+
+            rlNormal3f(0.0f, 0.0f, 1.0f);
+            rlColor4ub(color.r, color.g, color.b, color.a);
+
+            rlTexCoord2f(texShapesRec.x/texShapes.width, texShapesRec.y/texShapes.height);
+            rlVertex2f(topLeft.x, topLeft.y);
+
+            rlTexCoord2f(texShapesRec.x/texShapes.width, (texShapesRec.y + texShapesRec.height)/texShapes.height);
+            rlVertex2f(bottomLeft.x, bottomLeft.y);
+
+            rlTexCoord2f((texShapesRec.x + texShapesRec.width)/texShapes.width, (texShapesRec.y + texShapesRec.height)/texShapes.height);
+            rlVertex2f(bottomRight.x, bottomRight.y);
+
+            rlTexCoord2f((texShapesRec.x + texShapesRec.width)/texShapes.width, texShapesRec.y/texShapes.height);
+            rlVertex2f(topRight.x, topRight.y);
+
+        rlEnd();
+
+        rlSetTexture(0);
+    #else
+        rlBegin(RL_TRIANGLES);
+
+            rlColor4ub(color.r, color.g, color.b, color.a);
+
+            rlVertex2f(topLeft.x, topLeft.y);
+            rlVertex2f(bottomLeft.x, bottomLeft.y);
+            rlVertex2f(topRight.x, topRight.y);
+
+            rlVertex2f(topRight.x, topRight.y);
+            rlVertex2f(bottomLeft.x, bottomLeft.y);
+            rlVertex2f(bottomRight.x, bottomRight.y);
+
+        rlEnd();
+    #endif
     }
 
 }

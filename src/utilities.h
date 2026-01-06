@@ -1,11 +1,11 @@
 #pragma once
 #include "includes.h"
 
-class Utilities {
+namespace Utilities {
 
-    public:
-        void init();
-        void drawBackground();
-        float toggleFullScreenWindow();
+    void init();
+    void drawBackground();
+    float toggleFullScreenWindow();
+    void DrawRectangleLinesPro(Rectangle rec, Vector2 origin, float rotation, Color color);
 
-};
+}

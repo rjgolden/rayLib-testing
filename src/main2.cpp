@@ -3,8 +3,7 @@
 int main(){ 
         
     //setup
-    Utilities utils;
-    utils.init();
+    Utilities::init();
     
     float scale{1.0f};  
     float deltaTime{0.0f};
@@ -38,7 +37,7 @@ int main(){
         deltaTime = GetFrameTime();
 
         if(IsKeyPressed(KEY_F)) {
-            scale = utils.toggleFullScreenWindow();
+            scale = Utilities::toggleFullScreenWindow();
             centerX = (static_cast<float>(config::screenWidth)*scale)/2.0f;
             centerY = (static_cast<float>(config::screenHeight)*scale)/2.0f;
             gameCamera.camera.zoom = scale;
@@ -50,8 +49,8 @@ int main(){
             gameCamera.camera.target.y += (centerY - gameCamera.camera.target.y) * (config::cameraLerp * deltaTime);
         }
         else{
-            gameCamera.camera.target.x += (playerAnimation.getPositionX() - gameCamera.camera.target.x) * (playerAnimation.getPlayerSpeed() * deltaTime);
-            gameCamera.camera.target.y += (playerAnimation.getPositionY() - gameCamera.camera.target.y) * (playerAnimation.getPlayerSpeed() * deltaTime);
+            gameCamera.camera.target.x += ((playerAnimation.getPositionX() + 16.0f) - gameCamera.camera.target.x) * (playerAnimation.getPlayerSpeed() * deltaTime);
+            gameCamera.camera.target.y += ((playerAnimation.getPositionY() + 32.0f) - gameCamera.camera.target.y) * (playerAnimation.getPlayerSpeed() * deltaTime);
         }
 
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
@@ -64,10 +63,11 @@ int main(){
         BeginDrawing();
             ClearBackground(BLACK);                        
             BeginMode2D(gameCamera.camera);
-                utils.drawBackground();
+                Utilities::drawBackground();
                 fireAnimation.updateSprite();
                 coinAnimation.updateSprite();
                 playerAnimation.updateSprite();
+                DrawRectanglePro({0.0f, 0.0f, 200.0f, 100.0f}, {0.0f}, 0.0f, RED);
             EndMode2D();
         EndDrawing();
     }      

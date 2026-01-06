@@ -39,10 +39,6 @@ void Player::drawHitbox() {
     DrawEllipseLines(m_positionX + 16.5f, m_positionY + 32.0f, 8.0f, 12.0f, RED); 
 }
 
-void Player::drawAttackHitbox() {
-    DrawRectangleLines(m_attackRect.x, m_attackRect.y, m_attackRect.width, m_attackRect.height, GREEN);
-};
-
 void Player::setState(uint8_t newState){
 
     m_updateTime = 1.0f / m_animationTime;
@@ -248,19 +244,11 @@ void Player::handleKeyboardAttack() {
     m_attackSound.looping = true;
 
     //many mahgic numbers here  - will fix in future
-    m_attackRect.x = m_positionX + 16.0f;
-    m_attackRect.y = m_positionY + 16.0f; 
-    m_attackRect.width = 0.0f; 
-    m_attackRect.height = 0.0f; 
 
     if(IsKeyDown(KEY_LEFT)){
         m_idle = false;
         m_direction = LEFT; 
-        m_attackRect.x -= 64.0f;
-        m_attackRect.width = 55.0f; 
-        m_attackRect.height = 15.0f;
-        beam.setPosition(Vector2({m_attackRect.x, m_attackRect.y}));
-        beam.setRotation(180.0f);
+        beam.setPosition(Vector2({m_positionX-128.0f, m_positionY + 16.0f}));
         beam.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
@@ -270,11 +258,8 @@ void Player::handleKeyboardAttack() {
     else if(IsKeyDown(KEY_RIGHT)){
         m_idle = false;
         m_direction = RIGHT;
-        m_attackRect.x += 11.0f; 
-        m_attackRect.width = 55.0f;
-        m_attackRect.height = 15.0f;
-        beam.setPosition(Vector2({m_attackRect.x, m_attackRect.y}));
-        beam.setRotation(0.0f);
+       
+        beam.setPosition(Vector2({m_positionX + 32.0f, m_positionY + 16.0f}));
         beam.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
@@ -284,12 +269,9 @@ void Player::handleKeyboardAttack() {
     else if(IsKeyDown(KEY_UP)){
         m_idle = false;
         m_direction = UP; 
-        m_attackRect.x -= 8.0f;
-        m_attackRect.y -= 40.0f;
-        m_attackRect.width = 15.0f;
-        m_attackRect.height = 55.0f;
-        beam.setPosition(Vector2({m_attackRect.x, m_attackRect.y}));
-        beam.setRotation(90.0f);
+        
+        beam.setPosition(Vector2({m_positionX + 32.0f, m_positionY}));
+        beam.setRotation(270.0f);
         beam.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
@@ -299,12 +281,9 @@ void Player::handleKeyboardAttack() {
     else if(IsKeyDown(KEY_DOWN)){
         m_idle = false;
         m_direction = IDLE; 
-        m_attackRect.x -= 8.0f;
-        m_attackRect.y += 20.0f;
-        m_attackRect.width = 15.0f; 
-        m_attackRect.height = 55.0f;
-        beam.setPosition(Vector2({m_attackRect.x, m_attackRect.y}));
-        beam.setRotation(270.0f);
+       
+        beam.setPosition(Vector2({m_positionX, m_positionY - 64.0f}));
+        beam.setRotation(90.0f);
         beam.updateSprite(); 
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
@@ -316,7 +295,7 @@ void Player::handleKeyboardAttack() {
             PauseMusicStream(m_attackSound);
         }
     }
-    drawAttackHitbox();
+  
 
 }
 
@@ -328,9 +307,7 @@ void Player::handleControllerAttack() {
     if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)){
         m_idle = false;
         m_direction = LEFT; 
-        m_attackRect.x -= 64.0f;
-        m_attackRect.width = 55.0f; 
-        m_attackRect.height = 15.0f;
+       
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -339,9 +316,7 @@ void Player::handleControllerAttack() {
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)){
         m_idle = false;
         m_direction = RIGHT;
-        m_attackRect.x += 11.0f; 
-        m_attackRect.width = 55.0f;
-        m_attackRect.height = 15.0f;
+       
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -350,10 +325,7 @@ void Player::handleControllerAttack() {
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_UP)){
         m_idle = false;
         m_direction = UP; 
-        m_attackRect.x -= 8.0f;
-        m_attackRect.y -= 40.0f;
-        m_attackRect.width = 15.0f;
-        m_attackRect.height = 55.0f;
+       
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -362,10 +334,7 @@ void Player::handleControllerAttack() {
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)){
         m_idle = false;
         m_direction = IDLE; 
-        m_attackRect.x -= 8.0f;
-        m_attackRect.y += 20.0f;
-        m_attackRect.width = 15.0f; 
-        m_attackRect.height = 55.0f; 
+       
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -385,9 +354,7 @@ void Player::handleControllerAttack() {
         if(m_axisXR > 0.3f){
             m_idle = false;
             m_direction = RIGHT;
-            m_attackRect.x += 11.0f; 
-            m_attackRect.width = 55.0f;
-            m_attackRect.height = 15.0f;
+           
             if (!IsMusicStreamPlaying(m_attackSound)) {
                 PlayMusicStream(m_attackSound);
             }
@@ -396,9 +363,7 @@ void Player::handleControllerAttack() {
         else if(m_axisXR < -0.3f) {
             m_idle = false;
             m_direction = LEFT; 
-            m_attackRect.x -= 64.0f;
-            m_attackRect.width = 55.0f; 
-            m_attackRect.height = 15.0f;
+        
             if (!IsMusicStreamPlaying(m_attackSound)) {
                 PlayMusicStream(m_attackSound);
             }
@@ -409,10 +374,7 @@ void Player::handleControllerAttack() {
         if(m_axisYR > 0.3f){
             m_idle = false;
             m_direction = IDLE; 
-            m_attackRect.x -= 8.0f;
-            m_attackRect.y += 20.0f;
-            m_attackRect.width = 15.0f; 
-            m_attackRect.height = 55.0f; 
+          
             if (!IsMusicStreamPlaying(m_attackSound)) {
                 PlayMusicStream(m_attackSound);
             }
@@ -421,10 +383,7 @@ void Player::handleControllerAttack() {
         else if(m_axisYR < -0.3f) {
             m_idle = false;
             m_direction = UP; 
-            m_attackRect.x -= 8.0f;
-            m_attackRect.y -= 40.0f;
-            m_attackRect.width = 15.0f;
-            m_attackRect.height = 55.0f;
+           
             if (!IsMusicStreamPlaying(m_attackSound)) {
                 PlayMusicStream(m_attackSound);
             }
@@ -432,7 +391,7 @@ void Player::handleControllerAttack() {
         }
     }
     
-    drawAttackHitbox();
+   
 }
 
 void Player::updateSprite() {

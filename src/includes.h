@@ -1,7 +1,8 @@
 #pragma once
 
 // In Animaiton.h:
-//#include <raylib.h>
+//#include "raylib.h"
+//#include "rlgl"
 //#include <iostream>
 //#include <array>
 //#include <cstdint>

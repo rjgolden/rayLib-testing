@@ -64,7 +64,7 @@ void Animation::updateSprite(){
     else animateSprite();
     drawSprite();
     //drawRectbox();
-    //drawHitbox();
+    drawHitbox();
 }
 
 /*-------------GETTERS------------*/
