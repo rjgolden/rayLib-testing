@@ -169,12 +169,7 @@ int main()
                 }  
 
                 if(CheckCollisionRecs(captainAnimation.getAttackRect(),  enemyAnimation.getHitboxRect())){
-                    system("cls");
-                    int randomSound = rand() % 2; // Randomly choose between two sounds
-                    if(randomSound == 0) {PlaySound(enemyHurtSound);}
-                    else {PlaySound(enemyHurtSound2);}
                     enemyAnimation.takeDamage(25); 
-                    std::cout << "Enemies health: " << enemyAnimation.getHealth() << "\n"; 
                     if(enemyAnimation.getHealth() <= 0){
                         Explode(enemyAnimation.getPosition(), RED, rand() % particleTextures.size()); // Randomly choose a texture index
                         std::cout << "Enemies killed: " << ++enemiesKilled << "\n"; 

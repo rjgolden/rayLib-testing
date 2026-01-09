@@ -5,13 +5,13 @@
 #include "soundSystem.h"
 #include "config.h"
 #include "gameCamera.h"
+#include "enemy.h"
 
 class Game {
 
     public:
-        Game();
-        ~Game();
         void runGame();
+        void controls();
 
     private:
         float m_scale{1.0f};  

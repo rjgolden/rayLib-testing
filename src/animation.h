@@ -26,11 +26,13 @@ class Animation {
         float getWidth();
         float getHeight();
         Vector2 getPosition();
+        Vector2 getDefaultDimensions();
         Rectangle getHitboxRect();
 
         // SETTERS
         void setPosition(Vector2 position);
         void setRotation(float rotation);
+        void setHitbox(Vector2 dimensions);
         
     protected:
 
@@ -41,6 +43,8 @@ class Animation {
         uint8_t m_frameCount{0}; 
         uint8_t m_currentFrame{0}; // Current frame of the animation
         bool m_random{false};
+        float m_defaultWidth{0.0f};
+        float m_defaultHeight{0.0f};
         float m_runningTime{0.0f};  // Time accumulator for the animation
         float m_animationTime{12.0f}; // Time animtion plays for - default 12.0f 83.33ms
         float m_updateTime{1.0f/m_animationTime}; // Time between frame updates

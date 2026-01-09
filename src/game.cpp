@@ -1,28 +1,29 @@
 #include "game.h"
-
-Game::Game(){}
-
-Game::~Game(){}
+#include <iostream>
 
 void Game::runGame(){
-    //setup
+
+    // setup
     Utilities::init();
 
-    //animations
+    // animations
     Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, m_centerX, m_centerY, true);
     Animation coinAnimation("src/resources/Animations/coin_gold.png", 8, m_centerX, m_centerY, false);
 
-    //player
+    // player
     Player playerAnimation;
 
-    //camera
+    // enemy
+    Enemy enemy("src/resources/Animations/enemyAnimation.png", 6);
+
+    // camera
     GameCamera gameCamera;
 
-    //sound stuff
+    // sound stuff
     SoundSystem soundSystem;  
     Sound coin = LoadSound("src/resources/Sounds/coin.mp3");
 
-    //music
+    // music
     Music music = LoadMusicStream("src/resources/Sounds/fireSound.mp3");
     PlayMusicStream(music);
     SetMusicVolume(music, 0.01f);
@@ -58,6 +59,17 @@ void Game::runGame(){
             PlaySound(coin);
         }
 
+        enemy.setEnemySpeed(2.0f);
+        if(CheckCollisionRecs(playerAnimation.getBeamAttackRect(), enemy.getHitboxRect())){
+            std::cout << "hit\n";
+            enemy.takeDamage(0.25f); 
+            enemy.setEnemySpeed(0.5f);
+            if(enemy.getHealth() <= 0.0f){
+                enemy.setHealth(100.0f); 
+                enemy.setPosition(Vector2{static_cast<float>(GetRandomValue(0, config::screenWidth)), static_cast<float>(GetRandomValue(0, config::screenWidth))}); 
+            }
+        }  
+
         BeginDrawing();
             ClearBackground(BLACK);                        
             BeginMode2D(gameCamera.camera);
@@ -65,18 +77,18 @@ void Game::runGame(){
                 fireAnimation.updateSprite();
                 coinAnimation.updateSprite();
                 playerAnimation.updateSprite();
+                enemy.updateSprite();
+                enemy.chasePlayer(playerAnimation.getPosition());
             EndMode2D();
         EndDrawing();
     }  
     
-    //Explicit destructor calls
+    // explicit destructor calls
     fireAnimation.~Animation();
     coinAnimation.~Animation();
     playerAnimation.~Player();
     soundSystem.~SoundSystem();
     UnloadMusicStream(music);
 
-
-    
     CloseWindow();
 }

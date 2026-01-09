@@ -3,22 +3,27 @@
 /*-------------------------------*/
 Player::Player() : m_beamAnimation("src/resources/Animations/defaultBeam.png", 8, 0.0f, 0.0f, false) {
 
-    // vector Derived from animation class
+    // std::array derived from animation class
     m_animationTextures[0] = LoadTexture("src/resources/Animations/eyeball-Idle.png"); 
     m_animationTextures[1] = LoadTexture("src/resources/Animations/eyeballMoveLeft.png");
     m_animationTextures[2] = LoadTexture("src/resources/Animations/eyeballMoveRight.png");
     m_animationTextures[3] = LoadTexture("src/resources/Animations/eyeballMoveUp.png");
     m_currentTexture = &m_animationTextures[0]; // default is idle
-    
-    m_frameCount = 8;
 
-    // Rectangles - Derived from animation class
-    m_animationRect = { 0.0f, 0.0f, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height) }; 
-    m_hitboxRect = { 0.0f, 0.0f, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height) };
+    // derived from animation
+    m_frameCount = 8;
+    m_defaultWidth = static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount);
+    m_defaultHeight = static_cast<float>(m_animationTextures[0].height);
+
+    // rectangles - derived from animation class
+    m_animationRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight }; 
+    m_hitboxRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight };
 
     // position and speed, Variables derived from animation class
     m_positionX = static_cast<float>(config::halfScreenWidth);
     m_positionY = static_cast<float>(config::halfScreenHeight); 
+
+    m_defaultBeamSize = m_beamAnimation.getDefaultDimensions();
 
 }
 
@@ -44,8 +49,8 @@ void Player::setState(uint8_t newState){
     m_updateTime = 1.0f / m_animationTime;
 
     if (newState != m_currentState) {  
+
         m_currentState = newState;
-        m_lastDirection = newState;
 
         switch(newState) {
             case LEFT: m_currentTexture = &m_animationTextures[1]; m_animationTime = 12.0f; break;  // left
@@ -66,23 +71,23 @@ void Player::handleKeyboardMovement(){
     //---------------//
     if (IsKeyDown(KEY_A)) {
         m_idle = false;
-        m_direction = LEFT; 
+        m_state = LEFT; 
         m_positionX -= m_playerSpeed;
     }
     else if (IsKeyDown(KEY_D)){ 
         m_idle = false;
-        m_direction = RIGHT;
+        m_state = RIGHT;
         m_positionX += m_playerSpeed;
     }
 
     if (IsKeyDown(KEY_W)){ 
         m_idle = false;
-        m_direction = UP;
+        m_state = UP;
         m_positionY -= m_playerSpeed;
     }
     else if (IsKeyDown(KEY_S)){ 
         m_idle = false;
-        m_direction = IDLE;
+        m_state = IDLE;
         m_positionY += m_playerSpeed;
     }
 
@@ -101,22 +106,22 @@ void Player::handleControllerMovement(){
 
     if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) {
         m_idle = false;
-        m_direction = LEFT; 
+        m_state = LEFT; 
         m_positionX -= m_playerSpeed;
     }
     else if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) {
             m_idle = false;
-            m_direction = RIGHT;
+            m_state = RIGHT;
             m_positionX += m_playerSpeed;
     }
     if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_UP)) {
         m_idle = false;
-        m_direction = UP;
+        m_state = UP;
         m_positionY -= m_playerSpeed;
     }
     else if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_DOWN)) {
         m_idle = false;
-        m_direction = IDLE;
+        m_state = IDLE;
         m_positionY += m_playerSpeed;
     }
 
@@ -125,10 +130,10 @@ void Player::handleControllerMovement(){
         m_idle = false;
         m_positionX += m_axisX * m_playerSpeed;
             if(m_axisX > 0.3f){
-            m_direction = RIGHT;
+            m_state = RIGHT;
         }
         else if(m_axisX < -0.3f) {
-            m_direction = LEFT;
+            m_state = LEFT;
         }
         
     }
@@ -136,10 +141,10 @@ void Player::handleControllerMovement(){
         m_idle = false;
         m_positionY  += m_axisY * m_playerSpeed;
         if(m_axisY > 0.3f){
-            m_direction = IDLE;
+            m_state = IDLE;
         }
         else if(m_axisY < -0.3f) {
-            m_direction = UP;
+            m_state = UP;
         }
     }
 }
@@ -240,63 +245,54 @@ void Player::handleControllerDash(){
 
 void Player::handleKeyboardAttack() {
 
-
     static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
     m_attackSound.looping = true;
     m_beamAnimation.setPosition({m_positionX, m_positionY});
     m_beamAnimation.setRotation(0.0f);
+    m_beamAnimation.setHitbox(Vector2{1.0f, 1.0f});
     //many mahgic numbers here  - will fix in future
 
     if(IsKeyDown(KEY_LEFT)){
         m_idle = false;
-        m_direction = LEFT; 
+        m_state = LEFT; 
         m_beamAnimation.setPosition(Vector2({m_positionX-120.0f, m_positionY + 16.0f}));
+        m_beamAnimation.setHitbox(m_defaultBeamSize);
         m_beamAnimation.updateSprite();
-        if (!IsMusicStreamPlaying(m_attackSound)) {
-            PlayMusicStream(m_attackSound);
-        }
+        if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else if(IsKeyDown(KEY_RIGHT)){
         m_idle = false;
-        m_direction = RIGHT;
-       
+        m_state = RIGHT;
         m_beamAnimation.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
+        m_beamAnimation.setHitbox(m_defaultBeamSize);
         m_beamAnimation.updateSprite();
-        if (!IsMusicStreamPlaying(m_attackSound)) {
-            PlayMusicStream(m_attackSound);
-        }
+        if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else if(IsKeyDown(KEY_UP)){
         m_idle = false;
-        m_direction = UP; 
-        
+        m_state = UP; 
         m_beamAnimation.setPosition(Vector2({m_positionX, m_positionY + 16.0f}));
+        m_beamAnimation.setHitbox(m_defaultBeamSize);
         m_beamAnimation.setRotation(270.0f);
         m_beamAnimation.updateSprite();
-        if (!IsMusicStreamPlaying(m_attackSound)) {
-            PlayMusicStream(m_attackSound);
-        }
+        if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else if(IsKeyDown(KEY_DOWN)){
         m_idle = false;
-        m_direction = DOWN; 
-       
+        m_state = DOWN; 
         m_beamAnimation.setPosition(Vector2({m_positionX + 32.0f, m_positionY + 32.0f}));
+        m_beamAnimation.setHitbox(m_defaultBeamSize);
         m_beamAnimation.setRotation(90.0f);
         drawSprite(); 
         m_beamAnimation.updateSprite();
-        if (!IsMusicStreamPlaying(m_attackSound)) {
-            PlayMusicStream(m_attackSound);
-        }
+        if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else {
-        if (IsMusicStreamPlaying(m_attackSound)) {
-            PauseMusicStream(m_attackSound);
-        }
+        if (IsMusicStreamPlaying(m_attackSound)) PauseMusicStream(m_attackSound);
     }
   
 
@@ -309,7 +305,7 @@ void Player::handleControllerAttack() {
 
     if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)){
         m_idle = false;
-        m_direction = LEFT; 
+        m_state = LEFT; 
        
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
@@ -318,7 +314,7 @@ void Player::handleControllerAttack() {
     }
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)){
         m_idle = false;
-        m_direction = RIGHT;
+        m_state = RIGHT;
        
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
@@ -327,7 +323,7 @@ void Player::handleControllerAttack() {
     }
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_UP)){
         m_idle = false;
-        m_direction = UP; 
+        m_state = UP; 
        
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
@@ -336,7 +332,7 @@ void Player::handleControllerAttack() {
     }
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)){
         m_idle = false;
-        m_direction = IDLE; 
+        m_state = IDLE; 
        
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
@@ -356,7 +352,7 @@ void Player::handleControllerAttack() {
     if (std::fabs(m_axisXR) > 0.1f) {
         if(m_axisXR > 0.3f){
             m_idle = false;
-            m_direction = RIGHT;
+            m_state = RIGHT;
            
             if (!IsMusicStreamPlaying(m_attackSound)) {
                 PlayMusicStream(m_attackSound);
@@ -365,7 +361,7 @@ void Player::handleControllerAttack() {
         }
         else if(m_axisXR < -0.3f) {
             m_idle = false;
-            m_direction = LEFT; 
+            m_state = LEFT; 
         
             if (!IsMusicStreamPlaying(m_attackSound)) {
                 PlayMusicStream(m_attackSound);
@@ -376,7 +372,7 @@ void Player::handleControllerAttack() {
     if (std::fabs(m_axisYR) > 0.1f) {
         if(m_axisYR > 0.3f){
             m_idle = false;
-            m_direction = IDLE; 
+            m_state = IDLE; 
           
             if (!IsMusicStreamPlaying(m_attackSound)) {
                 PlayMusicStream(m_attackSound);
@@ -385,7 +381,7 @@ void Player::handleControllerAttack() {
         }
         else if(m_axisYR < -0.3f) {
             m_idle = false;
-            m_direction = UP; 
+            m_state = UP; 
            
             if (!IsMusicStreamPlaying(m_attackSound)) {
                 PlayMusicStream(m_attackSound);
@@ -407,13 +403,13 @@ void Player::updateSprite() {
         handleControllerDash();
         handleControllerAttack();
     }
-    setState(m_direction);  
+    setState(m_state);  
     animateSprite();
-    if(m_direction == DOWN){
+    if(IsKeyDown(KEY_DOWN) && m_currentState == DOWN) {
         drawHitbox();
-    }
-    else{
-        drawSprite();
+    } 
+    else { 
+        drawSprite(); 
         drawHitbox();
     }
 
@@ -422,4 +418,8 @@ void Player::updateSprite() {
 /*-------------GETTERS------------*/
 float Player::getPlayerSpeed(){
     return m_playerSpeed;
+}
+
+Rectangle Player::getBeamAttackRect() {
+    return m_beamAnimation.getHitboxRect();
 }

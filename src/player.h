@@ -30,7 +30,7 @@ class Player : public Animation {
 
         // getters
         float getPlayerSpeed();
-        Rectangle getAttackRect();
+        Rectangle getBeamAttackRect();
 
         enum {IDLE,LEFT,RIGHT,UP,DOWN};
 
@@ -41,8 +41,7 @@ class Player : public Animation {
     
         // frame variables
         bool m_idle{true}; 
-        uint8_t m_direction{0}; 
-        uint8_t m_lastDirection{0};
+        uint8_t m_state{0}; 
 
         // texture stuff
         Texture2D* m_currentTexture{nullptr};  // pointer to current texture
@@ -54,9 +53,6 @@ class Player : public Animation {
         float m_dashTimer{0.0f};
         bool m_isDashing{false};
 
-        // attack stuff
-        Rectangle m_attackRect{0.0f};
-
         //controller stuff
         float m_axisX{0.0f};
         float m_axisY{0.0f};
@@ -65,5 +61,6 @@ class Player : public Animation {
 
         // animations & sounds
         Animation m_beamAnimation;
+        Vector2 m_defaultBeamSize{0.0f};
 
 };

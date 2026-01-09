@@ -30,6 +30,8 @@ class Enemy : public Animation {
         int getHealth();
         void setHealth(int health);
         Vector2 getPosition();
+
+        
         void setEnemySpeed(float speed);
 
 };
