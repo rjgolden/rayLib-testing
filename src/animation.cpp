@@ -1,4 +1,4 @@
-#include "animation2.h"
+#include "animation.h"
 
 /*-------------------------------*/
 Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY, bool random){
@@ -24,10 +24,9 @@ Animation::Animation() {};
 
 Animation::~Animation(){
     UnloadTexture(m_animationTextures[0]);
-    std::cout << "Animation Destroyed, texture(s) succesfully unloaded.\n";
 }
 
-/*-------------------------------*/
+/*--------SPRITE-METHODS-----------*/
 void Animation::animateSprite(){
     float deltaTime = GetFrameTime();
     m_runningTime += deltaTime;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <raylib.h>
-#include <iostream>
 #include <array>
 #include <cstdint>
 #include <string>

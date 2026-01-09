@@ -1,8 +1,8 @@
-#include "player2.h"
+#include "player.h"
 
 /*-------------------------------*/
-Player::Player() {
-    
+Player::Player() : m_beamAnimation("src/resources/Animations/defaultBeam.png", 8, 0.0f, 0.0f, false) {
+
     // vector Derived from animation class
     m_animationTextures[0] = LoadTexture("src/resources/Animations/eyeball-Idle.png"); 
     m_animationTextures[1] = LoadTexture("src/resources/Animations/eyeballMoveLeft.png");
@@ -27,10 +27,10 @@ Player::~Player() {
     UnloadTexture(m_animationTextures[1]);
     UnloadTexture(m_animationTextures[2]);
     UnloadTexture(m_animationTextures[3]); 
-    std::cout << "Player Object Destroyed, textures succesfully unloaded.\n";
+    m_beamAnimation.~Animation();
 }
 
-/*-------------------------------*/
+/*--------SPRITE-METHODS-----------*/
 void Player::drawSprite() {
     DrawTexturePro(*m_currentTexture, m_animationRect, {static_cast<float>(m_positionX), static_cast<float>(m_positionY), static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, m_rotation, WHITE);
 }
@@ -58,6 +58,7 @@ void Player::setState(uint8_t newState){
 
 }
 
+/*-------------------------------*/
 void Player::handleKeyboardMovement(){
     bool wasIdle = m_idle; 
     //m_direction = 0; uncomment if idle default is wanted
@@ -239,18 +240,18 @@ void Player::handleControllerDash(){
 
 void Player::handleKeyboardAttack() {
 
+
     static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
-    static Animation beam("src/resources/Animations/defaultBeam.png", 8, 0.0f, 0.0f, false);
     m_attackSound.looping = true;
-    beam.setPosition({m_positionX, m_positionY});
-    beam.setRotation(0.0f);
+    m_beamAnimation.setPosition({m_positionX, m_positionY});
+    m_beamAnimation.setRotation(0.0f);
     //many mahgic numbers here  - will fix in future
 
     if(IsKeyDown(KEY_LEFT)){
         m_idle = false;
         m_direction = LEFT; 
-        beam.setPosition(Vector2({m_positionX-120.0f, m_positionY + 16.0f}));
-        beam.updateSprite();
+        m_beamAnimation.setPosition(Vector2({m_positionX-120.0f, m_positionY + 16.0f}));
+        m_beamAnimation.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -260,8 +261,8 @@ void Player::handleKeyboardAttack() {
         m_idle = false;
         m_direction = RIGHT;
        
-        beam.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
-        beam.updateSprite();
+        m_beamAnimation.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
+        m_beamAnimation.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -271,9 +272,9 @@ void Player::handleKeyboardAttack() {
         m_idle = false;
         m_direction = UP; 
         
-        beam.setPosition(Vector2({m_positionX, m_positionY + 16.0f}));
-        beam.setRotation(270.0f);
-        beam.updateSprite();
+        m_beamAnimation.setPosition(Vector2({m_positionX, m_positionY + 16.0f}));
+        m_beamAnimation.setRotation(270.0f);
+        m_beamAnimation.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }
@@ -283,10 +284,10 @@ void Player::handleKeyboardAttack() {
         m_idle = false;
         m_direction = DOWN; 
        
-        beam.setPosition(Vector2({m_positionX + 32.0f, m_positionY + 32.0f}));
-        beam.setRotation(90.0f);
+        m_beamAnimation.setPosition(Vector2({m_positionX + 32.0f, m_positionY + 32.0f}));
+        m_beamAnimation.setRotation(90.0f);
         drawSprite(); 
-        beam.updateSprite();
+        m_beamAnimation.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) {
             PlayMusicStream(m_attackSound);
         }

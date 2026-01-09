@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include "animation2.h"
+#include "animation.h"
 #include "config.h"
 
 class Player : public Animation {
@@ -11,20 +11,26 @@ class Player : public Animation {
         Player();
         ~Player();
 
+        // sprite
         void drawSprite() override;
         void updateSprite() override;
         void drawHitbox() override;
+        void drawAttackHitbox();
         void setState(uint8_t newState);
+        
+        // keyboard
         void handleKeyboardDash();
-        void handleControllerDash();
         void handleKeyboardAttack();
-        void handleControllerAttack();
         void handleKeyboardMovement();
+
+        // controller
+        void handleControllerDash();
+        void handleControllerAttack();
         void handleControllerMovement();
 
+        // getters
         float getPlayerSpeed();
         Rectangle getAttackRect();
-        void drawAttackHitbox();
 
         enum {IDLE,LEFT,RIGHT,UP,DOWN};
 
@@ -39,11 +45,11 @@ class Player : public Animation {
         uint8_t m_lastDirection{0};
 
         // texture stuff
-        Texture2D* m_currentTexture{nullptr};  // Pointer to current texture
-        int8_t m_currentState{0};// Track current state of textures 
+        Texture2D* m_currentTexture{nullptr};  // pointer to current texture
+        int8_t m_currentState{0};// track current state of textures 
 
         // dash stuff
-        float m_dashSpeed{800.0f};   // units per second
+        float m_dashSpeed{800.0f};   // pixels per second
         float m_dashTime{0.1f};    // how long the dash lasts
         float m_dashTimer{0.0f};
         bool m_isDashing{false};
@@ -57,5 +63,7 @@ class Player : public Animation {
         float m_axisXR{0.0f};
         float m_axisYR{0.0f};
 
+        // animations & sounds
+        Animation m_beamAnimation;
 
 };
