@@ -1,6 +1,54 @@
 #include "game.h"
 #include <iostream>
 
+struct Particle { 
+    Vector2 pos; 
+    Vector2 vel; 
+    Color tint;
+    float life{0.0f}; 
+    float rotation{0.0f}; 
+    float scale{0.0f}; 
+    int textureIndex{0}; 
+};
+
+std::array<Texture2D, 3> particleTextures;
+std::array<Particle, 100> particles;
+
+void Explode(Vector2 pos, Color tint, int textureIndex) {
+    for (int i{0}; i < 10; i++) {
+        for (auto& particle : particles) {
+            if (particle.life <= 0) {
+                particle = {pos, {static_cast<float>(GetRandomValue(-100,100)), static_cast<float>(GetRandomValue(-100,100))}, 
+                            tint, 1.0f, static_cast<float>(GetRandomValue(0, 360)), 1.0f, textureIndex};
+                break;
+            }
+        }
+    }
+}
+
+void updateParticles() {
+
+    for (auto& particle : particles) {
+        if (particle.life > 0.0f) {
+
+            particle.pos.x += particle.vel.x * GetFrameTime();
+            particle.pos.y += particle.vel.y * GetFrameTime();
+            particle.life -= GetFrameTime();
+            particle.scale = particle.life; 
+
+            if (particle.life <= 0.0f) {
+                particle.tint.a = 0; 
+            }
+
+            Texture2D& texture = particleTextures[particle.textureIndex];
+            Rectangle source = {0.0f, 0.0f, static_cast<float>(texture.width), static_cast<float>(texture.height)};
+            Rectangle dest = {particle.pos.x, particle.pos.y, texture.width * particle.scale, texture.height * particle.scale};
+            Vector2 origin = {texture.width * particle.scale * 0.5f, texture.height * particle.scale * 0.5f};
+            DrawTexturePro(texture, source, dest, origin, particle.rotation, particle.tint);
+        }
+    }
+}
+
 void Game::runGame(){
 
     // setup
@@ -28,6 +76,11 @@ void Game::runGame(){
     PlayMusicStream(music);
     SetMusicVolume(music, 0.01f);
     music.looping = true;
+
+    // particle (temp)
+    particleTextures[0] = (LoadTexture("src/resources/Textures/blood1.png"));
+    particleTextures[1] = (LoadTexture("src/resources/Textures/blood2.png"));
+    particleTextures[2] = (LoadTexture("src/resources/Textures/blood3.png"));
 
     while (!WindowShouldClose())
     {   
@@ -60,11 +113,11 @@ void Game::runGame(){
         }
 
         enemy.setEnemySpeed(2.0f);
-        if(CheckCollisionRecs(playerAnimation.getBeamAttackRect(), enemy.getHitboxRect())){
-            std::cout << "hit\n";
+        if(CheckCollisionRecs(playerAnimation.getBeamAttackRect(), enemy.getHitboxRect())) {
             enemy.takeDamage(0.25f); 
             enemy.setEnemySpeed(0.5f);
             if(enemy.getHealth() <= 0.0f){
+                Explode(enemy.getPosition(), RED, rand() % particleTextures.size());
                 enemy.setHealth(100.0f); 
                 enemy.setPosition(Vector2{static_cast<float>(GetRandomValue(0, config::screenWidth)), static_cast<float>(GetRandomValue(0, config::screenWidth))}); 
             }
@@ -79,6 +132,7 @@ void Game::runGame(){
                 playerAnimation.updateSprite();
                 enemy.updateSprite();
                 enemy.chasePlayer(playerAnimation.getPosition());
+                updateParticles(); 
             EndMode2D();
         EndDrawing();
     }  
