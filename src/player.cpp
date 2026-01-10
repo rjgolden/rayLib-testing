@@ -1,7 +1,8 @@
 #include "player.h"
 
 /*-------------------------------*/
-Player::Player() : m_beamAnimation("src/resources/Animations/defaultBeam.png", 8, 0.0f, 0.0f, false) {
+Player::Player() : m_beamAnimationX("src/resources/Animations/defaultBeamX.png", 8, 0.0f, 0.0f, false), 
+                   m_beamAnimationY("src/resources/Animations/defaultBeamY.png", 8, 0.0f, 0.0f, false) {
 
     // std::array derived from animation class
     m_animationTextures[0] = LoadTexture("src/resources/Animations/eyeball-Idle.png"); 
@@ -23,7 +24,8 @@ Player::Player() : m_beamAnimation("src/resources/Animations/defaultBeam.png", 8
     m_positionX = static_cast<float>(config::halfScreenWidth);
     m_positionY = static_cast<float>(config::halfScreenHeight); 
 
-    m_defaultBeamSize = m_beamAnimation.getDefaultDimensions();
+    m_defaultBeamSizeX = m_beamAnimationX.getDefaultDimensions();
+    m_defaultBeamSizeY = m_beamAnimationY.getDefaultDimensions();
 
 }
 
@@ -32,7 +34,8 @@ Player::~Player() {
     UnloadTexture(m_animationTextures[1]);
     UnloadTexture(m_animationTextures[2]);
     UnloadTexture(m_animationTextures[3]); 
-    m_beamAnimation.~Animation();
+    m_beamAnimationX.~Animation();
+    m_beamAnimationY.~Animation();
 }
 
 /*--------SPRITE-METHODS-----------*/
@@ -57,7 +60,7 @@ void Player::setState(uint8_t newState){
             case RIGHT: m_currentTexture = &m_animationTextures[2]; m_animationTime = 12.0f; break;  // right
             case UP: m_currentTexture = &m_animationTextures[3]; m_animationTime = 12.0f; break;  // up
             case DOWN: m_currentTexture = &m_animationTextures[0]; m_animationTime = 12.0f; break;  // down
-            default: m_currentTexture = &m_animationTextures[0]; m_animationTime = 6.0f; break; // idle 
+            default: m_currentTexture = &m_animationTextures[0]; m_animationTime = 12.0f; break; // idle 
         }
     }
 
@@ -245,57 +248,54 @@ void Player::handleControllerDash(){
 
 void Player::handleKeyboardAttack() {
 
+     //many magic numbers here - will fix in future
     static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
     m_attackSound.looping = true;
-    m_beamAnimation.setPosition({m_positionX, m_positionY});
-    m_beamAnimation.setRotation(0.0f);
-    m_beamAnimation.setHitbox(Vector2{1.0f, 1.0f});
-    //many mahgic numbers here  - will fix in future
+    m_beamAnimationX.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
+    m_beamAnimationX.setHitbox(Vector2{0.0f, 0.0f});
+    m_beamAnimationY.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
+    m_beamAnimationY.setHitbox(Vector2{0.0f, 0.0f});
 
     if(IsKeyDown(KEY_LEFT)){
         m_idle = false;
         m_state = LEFT; 
-        m_beamAnimation.setPosition(Vector2({m_positionX-120.0f, m_positionY + 16.0f}));
-        m_beamAnimation.setHitbox(m_defaultBeamSize);
-        m_beamAnimation.updateSprite();
+        m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
+        m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+        m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else if(IsKeyDown(KEY_RIGHT)){
         m_idle = false;
         m_state = RIGHT;
-        m_beamAnimation.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
-        m_beamAnimation.setHitbox(m_defaultBeamSize);
-        m_beamAnimation.updateSprite();
+        m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
+        m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+        m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else if(IsKeyDown(KEY_UP)){
         m_idle = false;
         m_state = UP; 
-        m_beamAnimation.setPosition(Vector2({m_positionX, m_positionY + 16.0f}));
-        m_beamAnimation.setHitbox(m_defaultBeamSize);
-        m_beamAnimation.setRotation(270.0f);
-        m_beamAnimation.updateSprite();
+        m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY - 96.0f}));
+        m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+        m_beamAnimationY.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else if(IsKeyDown(KEY_DOWN)){
         m_idle = false;
         m_state = DOWN; 
-        m_beamAnimation.setPosition(Vector2({m_positionX + 32.0f, m_positionY + 32.0f}));
-        m_beamAnimation.setHitbox(m_defaultBeamSize);
-        m_beamAnimation.setRotation(90.0f);
+        m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
+        m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
         drawSprite(); 
-        m_beamAnimation.updateSprite();
+        m_beamAnimationY.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else {
         if (IsMusicStreamPlaying(m_attackSound)) PauseMusicStream(m_attackSound);
     }
-  
-
 }
 
 void Player::handleControllerAttack() {
@@ -303,89 +303,91 @@ void Player::handleControllerAttack() {
     static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
     m_attackSound.looping = true;
 
+    // button attack
+
     if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)){
         m_idle = false;
         m_state = LEFT; 
-       
-        if (!IsMusicStreamPlaying(m_attackSound)) {
-            PlayMusicStream(m_attackSound);
-        }
+        m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
+        m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+        m_beamAnimationX.updateSprite();
+        if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)){
         m_idle = false;
         m_state = RIGHT;
-       
-        if (!IsMusicStreamPlaying(m_attackSound)) {
-            PlayMusicStream(m_attackSound);
-        }
+        m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
+        m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+        m_beamAnimationX.updateSprite();
+        if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_UP)){
         m_idle = false;
         m_state = UP; 
-       
-        if (!IsMusicStreamPlaying(m_attackSound)) {
-            PlayMusicStream(m_attackSound);
-        }
+        m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY - 96.0f}));
+        m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+        m_beamAnimationY.updateSprite();
+        if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)){
         m_idle = false;
-        m_state = IDLE; 
-       
-        if (!IsMusicStreamPlaying(m_attackSound)) {
-            PlayMusicStream(m_attackSound);
-        }
+        m_state = DOWN; 
+        m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
+        m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+        drawSprite(); 
+        m_beamAnimationY.updateSprite();
+        if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
     else {
-        if (IsMusicStreamPlaying(m_attackSound)) {
-            PauseMusicStream(m_attackSound);
-        }
+        if (IsMusicStreamPlaying(m_attackSound)) PauseMusicStream(m_attackSound);
+        
     }
 
     //right stick movement
+
     m_axisXR = GetGamepadAxisMovement(0, GAMEPAD_AXIS_RIGHT_X);
     m_axisYR = GetGamepadAxisMovement(0, GAMEPAD_AXIS_RIGHT_Y);
 
-    if (std::fabs(m_axisXR) > 0.1f) {
-        if(m_axisXR > 0.3f){
-            m_idle = false;
-            m_state = RIGHT;
-           
-            if (!IsMusicStreamPlaying(m_attackSound)) {
-                PlayMusicStream(m_attackSound);
-            }
-            UpdateMusicStream(m_attackSound); 
-        }
-        else if(m_axisXR < -0.3f) {
+    if ((std::fabs(m_axisXR) > 0.1f) || (std::fabs(m_axisYR) > 0.1f)) {
+        if(m_axisXR < -0.3f){
             m_idle = false;
             m_state = LEFT; 
-        
-            if (!IsMusicStreamPlaying(m_attackSound)) {
-                PlayMusicStream(m_attackSound);
-            }
-            UpdateMusicStream(m_attackSound); 
-        }   
-    }
-    if (std::fabs(m_axisYR) > 0.1f) {
-        if(m_axisYR > 0.3f){
-            m_idle = false;
-            m_state = IDLE; 
-          
-            if (!IsMusicStreamPlaying(m_attackSound)) {
-                PlayMusicStream(m_attackSound);
-            }
+            m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
+            m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+            m_beamAnimationX.updateSprite();
+            if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
             UpdateMusicStream(m_attackSound); 
         }
-        else if(m_axisYR < -0.3f) {
+        else if(m_axisXR > 0.3f) {
+            m_idle = false;
+            m_state = RIGHT;
+            m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
+            m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+            m_beamAnimationX.updateSprite(); 
+            if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
+            UpdateMusicStream(m_attackSound); 
+        }
+        else if(m_axisYR < -0.3f){
             m_idle = false;
             m_state = UP; 
-           
-            if (!IsMusicStreamPlaying(m_attackSound)) {
-                PlayMusicStream(m_attackSound);
-            }
+            m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY - 96.0f}));
+            m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+            m_beamAnimationY.updateSprite(); 
+            if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
+            UpdateMusicStream(m_attackSound); 
+        }
+        else if(m_axisYR > 0.3f) {
+            m_idle = false;
+            m_state = DOWN; 
+            m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
+            m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+            drawSprite(); 
+            m_beamAnimationY.updateSprite();
+            if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
             UpdateMusicStream(m_attackSound);
         }
     }
@@ -421,5 +423,6 @@ float Player::getPlayerSpeed(){
 }
 
 Rectangle Player::getBeamAttackRect() {
-    return m_beamAnimation.getHitboxRect();
+    if(m_state == UP  || m_state == DOWN) return m_beamAnimationY.getHitboxRect();
+    return m_beamAnimationX.getHitboxRect();
 }

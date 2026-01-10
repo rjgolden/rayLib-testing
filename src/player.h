@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <memory>
 #include "animation.h"
 #include "config.h"
 
@@ -59,8 +60,10 @@ class Player : public Animation {
         float m_axisXR{0.0f};
         float m_axisYR{0.0f};
 
-        // animations & sounds
-        Animation m_beamAnimation;
-        Vector2 m_defaultBeamSize{0.0f};
+        // animation & sound stuff
+        Animation m_beamAnimationX;
+        Animation m_beamAnimationY;
+        Vector2 m_defaultBeamSizeX{0.0f};
+        Vector2 m_defaultBeamSizeY{0.0f};
 
 };
