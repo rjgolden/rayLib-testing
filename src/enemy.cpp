@@ -4,21 +4,21 @@
 /*-------------------------------*/
 Enemy::Enemy(const char* filePath, uint8_t frameCount){
 
-    // Load textures
+    // load textures
     m_animationTextures[0] = LoadTexture(filePath); 
-    m_enemyHurt = LoadTexture("src/resources/Textures/hoodyGuyEnemyHurt.png"); // Load enemy hurt texture
+    m_enemyHurt = LoadTexture("src/resources/Textures/hoodyGuyEnemyHurt.png"); 
 
     m_defaultWidth = static_cast<float>(m_animationTextures[0].width) / static_cast<float>(frameCount);
     m_defaultHeight = static_cast<float>(m_animationTextures[0].height);
 
-    // Rectangles 
+    // rectangles 
     m_animationRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight }; 
     m_hitboxRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight };
-    m_healthBarRect = { 0.0f, 0.0f, m_defaultWidth, 10.0f }; // Health bar rectangle
+    m_healthBarRect = { 0.0f, 0.0f, m_defaultWidth, 10.0f };
 
     m_frameCount = frameCount;
     
-    // position and speed
+    // position and speed - dervied from animation class
     m_positionX = GetRandomValue(0, config::screenWidth); 
     m_positionY = GetRandomValue(0, config::screenHeight); 
 
@@ -26,6 +26,7 @@ Enemy::Enemy(const char* filePath, uint8_t frameCount){
 
 Enemy::~Enemy() {
     UnloadTexture(m_animationTextures[0]);
+    UnloadTexture(m_enemyHurt);
 }
 
 /*-------------------------------*/
@@ -42,21 +43,21 @@ void Enemy::chasePlayer(Vector2 position){
 }
 
 void Enemy::takeDamage(float damage) {
-    m_hurtFrameActive = true; // Activate hurt frame
+    m_hurtFrameActive = true; // activate hurt frame
     m_enemyHealth -= damage;
     if (m_enemyHealth < 0.0f) {
-        m_enemyHealth = 0.0f; // Prevent negative health
+        m_enemyHealth = 0.0f; // prevent negative health
     }
 }
 
 void Enemy::drawHealthBar(){
-    // Draw background
+    // draw background
     DrawRectangle(m_healthBarRect.x, m_healthBarRect.y, m_healthBarRect.width, m_healthBarRect.height, GRAY);
     
-    // Calculate health bar width based on current health
+    // calculate health bar width based on current health
     float healthWidth = (m_enemyHealth / 100.0f) * m_healthBarRect.width;
     
-    // Draw health bar
+    // draw health bar
     DrawRectangle(m_healthBarRect.x, m_healthBarRect.y, healthWidth, m_healthBarRect.height, RED);
     DrawRectangleLines(m_healthBarRect.x, m_healthBarRect.y, m_healthBarRect.width, m_healthBarRect.height, BLACK);
     
@@ -71,7 +72,7 @@ void Enemy::updateSprite(){
     m_healthBarRect.y = m_positionY - 13.0f;
     if(m_hurtFrameActive) {
         drawHurtFrame();
-        m_hurtFrameActive = false; // Reset hurt frame after drawing
+        m_hurtFrameActive = false; // reset hurt frame after drawing
     }
     else{
         animateSprite();

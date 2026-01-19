@@ -9,6 +9,9 @@ Player::Player() : m_beamAnimationX("src/resources/Animations/defaultBeamX.png",
     m_animationTextures[1] = LoadTexture("src/resources/Animations/eyeballMoveLeft.png");
     m_animationTextures[2] = LoadTexture("src/resources/Animations/eyeballMoveRight.png");
     m_animationTextures[3] = LoadTexture("src/resources/Animations/eyeballMoveUp.png");
+    m_animationTextures[4] = LoadTexture("src/resources/Animations/eyeball-attackleft.png");
+    m_animationTextures[5] = LoadTexture("src/resources/Animations/eyeball-attackRight.png");
+    m_animationTextures[6] = LoadTexture("src/resources/Animations/eyeball-attackDown.png");
     m_currentTexture = &m_animationTextures[0]; // default is idle
 
     // derived from animation
@@ -20,7 +23,7 @@ Player::Player() : m_beamAnimationX("src/resources/Animations/defaultBeamX.png",
     m_animationRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight }; 
     m_hitboxRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight };
 
-    // position and speed, Variables derived from animation class
+    // position - derived from animation class
     m_positionX = static_cast<float>(config::halfScreenWidth);
     m_positionY = static_cast<float>(config::halfScreenHeight); 
 
@@ -55,11 +58,14 @@ void Player::setState(uint8_t newState){
 
         m_currentState = newState;
 
-        switch(newState) {
+        switch(m_currentState) {
             case LEFT: m_currentTexture = &m_animationTextures[1]; m_animationTime = 12.0f; break;  // left
             case RIGHT: m_currentTexture = &m_animationTextures[2]; m_animationTime = 12.0f; break;  // right
             case UP: m_currentTexture = &m_animationTextures[3]; m_animationTime = 12.0f; break;  // up
             case DOWN: m_currentTexture = &m_animationTextures[0]; m_animationTime = 12.0f; break;  // down
+            case ATTACK_LEFT: m_currentTexture = &m_animationTextures[4]; m_animationTime = 12.0f; break;
+            case ATTACK_RIGHT:m_currentTexture = &m_animationTextures[5]; m_animationTime = 12.0f; break;
+            case ATTACK_DOWN: m_currentTexture = &m_animationTextures[6]; m_animationTime = 12.0f; break;
             default: m_currentTexture = &m_animationTextures[0]; m_animationTime = 12.0f; break; // idle 
         }
     }
@@ -251,6 +257,7 @@ void Player::handleKeyboardAttack() {
      //many magic numbers here - will fix in future
     static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
     m_attackSound.looping = true;
+    SetMusicVolume(m_attackSound, 0.05f);
     m_beamAnimationX.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
     m_beamAnimationX.setHitbox(Vector2{0.0f, 0.0f});
     m_beamAnimationY.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
@@ -258,8 +265,8 @@ void Player::handleKeyboardAttack() {
 
     if(IsKeyDown(KEY_LEFT)){
         m_idle = false;
-        m_state = LEFT; 
-        m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
+        m_state = ATTACK_LEFT; 
+        m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 12.0f}));
         m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
@@ -267,8 +274,8 @@ void Player::handleKeyboardAttack() {
     }
     else if(IsKeyDown(KEY_RIGHT)){
         m_idle = false;
-        m_state = RIGHT;
-        m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
+        m_state = ATTACK_RIGHT;
+        m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 12.0f}));
         m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
@@ -285,7 +292,7 @@ void Player::handleKeyboardAttack() {
     }
     else if(IsKeyDown(KEY_DOWN)){
         m_idle = false;
-        m_state = DOWN; 
+        m_state = ATTACK_DOWN; 
         m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
         m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
         drawSprite(); 
@@ -295,6 +302,9 @@ void Player::handleKeyboardAttack() {
     }
     else {
         if (IsMusicStreamPlaying(m_attackSound)) PauseMusicStream(m_attackSound);
+        if (m_state == ATTACK_RIGHT) m_state = RIGHT;
+        if (m_state == ATTACK_LEFT) m_state = LEFT;
+        if (m_state == ATTACK_DOWN) m_state = DOWN;
     }
 }
 
@@ -307,7 +317,7 @@ void Player::handleControllerAttack() {
 
     if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)){
         m_idle = false;
-        m_state = LEFT; 
+        m_state = ATTACK_LEFT; 
         m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
         m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
@@ -316,7 +326,7 @@ void Player::handleControllerAttack() {
     }
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)){
         m_idle = false;
-        m_state = RIGHT;
+        m_state = ATTACK_RIGHT;
         m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
         m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
@@ -334,17 +344,13 @@ void Player::handleControllerAttack() {
     }
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)){
         m_idle = false;
-        m_state = DOWN; 
+        m_state = ATTACK_DOWN; 
         m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
         m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
         drawSprite(); 
         m_beamAnimationY.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
-    }
-    else {
-        if (IsMusicStreamPlaying(m_attackSound)) PauseMusicStream(m_attackSound);
-        
     }
 
     //right stick movement
@@ -355,7 +361,7 @@ void Player::handleControllerAttack() {
     if ((std::fabs(m_axisXR) > 0.1f) || (std::fabs(m_axisYR) > 0.1f)) {
         if(m_axisXR < -0.3f){
             m_idle = false;
-            m_state = LEFT; 
+            m_state = ATTACK_LEFT; 
             m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
             m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
             m_beamAnimationX.updateSprite();
@@ -364,7 +370,7 @@ void Player::handleControllerAttack() {
         }
         else if(m_axisXR > 0.3f) {
             m_idle = false;
-            m_state = RIGHT;
+            m_state = ATTACK_RIGHT;
             m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
             m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
             m_beamAnimationX.updateSprite(); 
@@ -382,7 +388,7 @@ void Player::handleControllerAttack() {
         }
         else if(m_axisYR > 0.3f) {
             m_idle = false;
-            m_state = DOWN; 
+            m_state = ATTACK_DOWN; 
             m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
             m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
             drawSprite(); 
@@ -407,7 +413,7 @@ void Player::updateSprite() {
     }
     setState(m_state);  
     animateSprite();
-    if(IsKeyDown(KEY_DOWN) && m_currentState == DOWN) {
+    if(IsKeyDown(KEY_DOWN) && m_currentState == ATTACK_DOWN) {
         drawHitbox();
     } 
     else { 
@@ -423,6 +429,6 @@ float Player::getPlayerSpeed(){
 }
 
 Rectangle Player::getBeamAttackRect() {
-    if(m_state == UP  || m_state == DOWN) return m_beamAnimationY.getHitboxRect();
+    if(m_state == UP  || m_state == ATTACK_DOWN) return m_beamAnimationY.getHitboxRect();
     return m_beamAnimationX.getHitboxRect();
 }

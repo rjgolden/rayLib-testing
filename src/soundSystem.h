@@ -2,7 +2,7 @@
 
 #include <raylib.h>
 #include <cmath>
-// taken from raylib - written C style
+// taken from raylib - written in C style
 
 class SoundSystem {
 

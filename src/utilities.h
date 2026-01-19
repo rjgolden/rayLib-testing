@@ -10,6 +10,6 @@ namespace Utilities {
     void init();
     void drawBackground();
     float toggleFullScreenWindow();
-    void DrawRectangleLinesPro(Rectangle rec, Vector2 origin, float rotation, Color color);
+    void DrawRectangleLinesPro(Rectangle rec, Vector2 origin, Color color, float rotation);
 
 }

@@ -3,7 +3,7 @@
 namespace Utilities {
 
     void init(){
-        InitWindow(config::screenWidth, config::screenHeight, "Raylib Program");
+        InitWindow(config::screenWidth, config::screenHeight, "Test");
         SetWindowMinSize(config::screenWidth, config::screenHeight);
         SetTargetFPS(config::FPS);  
         SetWindowIcon(LoadImage("src/resources/Textures/space.png")); 
@@ -74,7 +74,7 @@ namespace Utilities {
 
     }
 
-    void DrawRectangleLinesPro(Rectangle rec, Vector2 origin, float rotation, Color color) {
+    void DrawRectangleLinesPro(Rectangle rec, Vector2 origin, Color color, float rotation) {
 
         Vector2 topLeft = { 0 };
         Vector2 topRight = { 0 };

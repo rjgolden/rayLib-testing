@@ -56,7 +56,7 @@ void Animation::drawSprite(){
 }
 
 void Animation::drawHitbox(){
-    Utilities::DrawRectangleLinesPro({m_positionX, m_positionY, m_hitboxRect.width, m_hitboxRect.height}, {0.0f, 0.0f}, m_rotation, RED);
+    Utilities::DrawRectangleLinesPro({m_positionX, m_positionY, m_hitboxRect.width, m_hitboxRect.height}, {0.0f, 0.0f}, RED, m_rotation);
 }
 
 void Animation::updateSprite(){

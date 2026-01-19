@@ -14,13 +14,14 @@ class Animation {
         Animation();
         virtual ~Animation();
         
+        // sprite
         virtual void drawSprite();
         virtual void updateSprite();
         virtual void drawHitbox();
         void animateSprite();
         void animateSpriteRandom();
     
-        // GETTERS
+        // getters
         float getPositionX();
         float getPositionY();
         float getWidth();
@@ -29,26 +30,24 @@ class Animation {
         Vector2 getDefaultDimensions();
         Rectangle getHitboxRect();
 
-        // SETTERS
+        // setters
         void setPosition(Vector2 position);
         void setRotation(float rotation);
         void setHitbox(Vector2 dimensions);
         
     protected:
 
-        std::array<Texture2D, 10> m_animationTextures; // Textures for the animation (idle and moving left and right for now)
-        Rectangle m_animationRect{0.0f}; // Source rectangle for the animation
-        Rectangle m_hitboxRect{0.0f}; // Hitbox for the animation
-
+        std::array<Texture2D, 10> m_animationTextures; // textures for the animation 
+        Rectangle m_animationRect{0.0f}; // source rectangle for the animation
+        Rectangle m_hitboxRect{0.0f}; // hitbox for the animation
         uint8_t m_frameCount{0}; 
-        uint8_t m_currentFrame{0}; // Current frame of the animation
-        bool m_random{false};
+        uint8_t m_currentFrame{0}; // current frame of the animation
+        bool m_random{false}; // whether or not to play frames randomly
         float m_defaultWidth{0.0f};
         float m_defaultHeight{0.0f};
-        float m_runningTime{0.0f};  // Time accumulator for the animation
-        float m_animationTime{12.0f}; // Time animtion plays for - default 12.0f 83.33ms
-        float m_updateTime{1.0f/m_animationTime}; // Time between frame updates
-        float m_scale{1.0f};
+        float m_runningTime{0.0f};  // time accumulator for the animation
+        float m_animationTime{12.0f}; // time animtion plays for - default is 12.0f (1/12) or 83.33ms
+        float m_updateTime{1.0f/m_animationTime}; // time between frame updates
         float m_positionX{0.0f}; 
         float m_positionY{0.0f}; 
         float m_rotation{0.0f};

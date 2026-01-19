@@ -33,7 +33,8 @@ class Player : public Animation {
         float getPlayerSpeed();
         Rectangle getBeamAttackRect();
 
-        enum {IDLE,LEFT,RIGHT,UP,DOWN};
+        // states
+        enum {IDLE,LEFT,RIGHT,UP,DOWN, ATTACK_RIGHT, ATTACK_LEFT, ATTACK_DOWN};
 
     private:
     
@@ -51,7 +52,7 @@ class Player : public Animation {
         // dash stuff
         float m_dashSpeed{800.0f};   // pixels per second
         float m_dashTime{0.1f};    // how long the dash lasts
-        float m_dashTimer{0.0f};
+        float m_dashTimer{0.0f}; // uses dashTime each frame
         bool m_isDashing{false};
 
         //controller stuff

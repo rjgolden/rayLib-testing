@@ -49,10 +49,25 @@ void updateParticles() {
     }
 }
 
+
+void Game::DrawLight(Vector2 position, float radius, Color color)
+{
+    DrawCircleGradient(
+        static_cast<int>(position.x) + 16,
+        static_cast<int>(position.y) + 32,
+        radius * m_scale,
+        color,
+        BLANK
+    );
+}
+
 void Game::runGame(){
 
     // setup
     Utilities::init();
+
+    // light map
+    RenderTexture2D lightMap = LoadRenderTexture(config::screenWidth, config::screenHeight);
 
     // animations
     Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, m_centerX, m_centerY, true);
@@ -63,7 +78,7 @@ void Game::runGame(){
 
     // enemy
     Enemy enemy("src/resources/Animations/enemyAnimation.png", 6);
-
+    
     // camera
     GameCamera gameCamera;
 
@@ -89,9 +104,14 @@ void Game::runGame(){
         m_deltaTime = GetFrameTime();
 
         if(IsKeyPressed(KEY_F)) {
+
             m_scale = Utilities::toggleFullScreenWindow();
+
             m_centerX = (static_cast<float>(config::screenWidth)*m_scale)/2.0f;
             m_centerY = (static_cast<float>(config::screenHeight)*m_scale)/2.0f;
+
+            lightMap = LoadRenderTexture(config::screenWidth*static_cast<int>(m_scale), config::screenHeight*static_cast<int>(m_scale));
+
             gameCamera.camera.zoom = m_scale;
             gameCamera.camera.offset = {m_centerX, m_centerY};
         }
@@ -123,19 +143,36 @@ void Game::runGame(){
             }
         }  
 
-        BeginDrawing();
-            ClearBackground(BLACK);                        
-            BeginMode2D(gameCamera.camera);
+        BeginDrawing(); 
+                    
+            BeginMode2D(gameCamera.camera); 
                 Utilities::drawBackground();
                 fireAnimation.updateSprite();
                 coinAnimation.updateSprite();
                 playerAnimation.updateSprite();
                 enemy.updateSprite();
-                enemy.chasePlayer(playerAnimation.getPosition());
+                //enemy.chasePlayer(playerAnimation.getPosition());
                 updateParticles(); 
-            EndMode2D();
-        EndDrawing();
-    }  
+            EndMode2D();   
+
+            BeginTextureMode(lightMap);  
+                ClearBackground(LIGHTGRAY); // screen tint (black for complete dark, etc.)
+                BeginBlendMode(BLEND_ADDITIVE); 
+                    //Vector2 screenPos = GetWorldToScreen2D(playerAnimation.getPosition(), gameCamera.camera);
+                    //DrawLight(screenPos, 150, Color{255, 240, 200, 255});
+                    //DrawLight(GetMousePosition(), 120, RED);
+                    Vector2 screenPos2 = GetWorldToScreen2D(fireAnimation.getPosition(), gameCamera.camera);
+                    float flicker = 140.0 + sin(GetTime() * 10.0) * 10.0;
+                    DrawLight(screenPos2, flicker, ORANGE);
+                EndBlendMode();
+            EndTextureMode(); 
+
+            BeginBlendMode(BLEND_MULTIPLIED); 
+                DrawTextureRec(lightMap.texture, Rectangle{0.0f, 0.0f, static_cast<float>(lightMap.texture.width), -static_cast<float>(lightMap.texture.height)}, Vector2{0, 0}, RAYWHITE);
+            EndBlendMode(); 
+
+        EndDrawing(); 
+    } 
     
     // explicit destructor calls
     fireAnimation.~Animation();

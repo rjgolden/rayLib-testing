@@ -1,4 +1,5 @@
 #pragma once
+
 #include "utilities.h"
 #include "player.h"
 #include "animation.h"
@@ -11,6 +12,7 @@ class Game {
 
     public:
         void runGame();
+        void DrawLight(Vector2 position, float radius, Color color);
         void controls();
 
     private:
