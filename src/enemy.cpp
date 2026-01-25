@@ -1,15 +1,14 @@
 #include "enemy.h"
-#include <cmath>
 
 /*-------------------------------*/
-Enemy::Enemy(const char* filePath, uint8_t frameCount){
+Enemy::Enemy(Texture2D texture, uint8_t frameCount){
 
     // load textures
-    m_animationTextures[0] = LoadTexture(filePath); 
-    m_enemyHurt = LoadTexture("src/resources/Textures/hoodyGuyEnemyHurt.png"); 
+    m_texture = texture; 
+    m_enemyHurt = Assets::enemyHurt; 
 
-    m_defaultWidth = static_cast<float>(m_animationTextures[0].width) / static_cast<float>(frameCount);
-    m_defaultHeight = static_cast<float>(m_animationTextures[0].height);
+    m_defaultWidth = static_cast<float>(m_texture.width) / static_cast<float>(frameCount);
+    m_defaultHeight = static_cast<float>(m_texture.height);
 
     // rectangles 
     m_animationRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight }; 
@@ -24,10 +23,7 @@ Enemy::Enemy(const char* filePath, uint8_t frameCount){
 
 }
 
-Enemy::~Enemy() {
-    UnloadTexture(m_animationTextures[0]);
-    UnloadTexture(m_enemyHurt);
-}
+Enemy::Enemy() {}
 
 /*-------------------------------*/
 void Enemy::chasePlayer(Vector2 position){

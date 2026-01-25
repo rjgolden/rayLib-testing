@@ -62,6 +62,7 @@ class Player : public Animation {
         float m_axisYR{0.0f};
 
         // animation & sound stuff
+        std::array<Texture2D, 10> m_animationTextures;
         Animation m_beamAnimationX;
         Animation m_beamAnimationY;
         Vector2 m_defaultBeamSizeX{0.0f};

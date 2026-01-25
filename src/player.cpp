@@ -1,8 +1,8 @@
 #include "player.h"
 
 /*-------------------------------*/
-Player::Player() : m_beamAnimationX("src/resources/Animations/defaultBeamX.png", 8, 0.0f, 0.0f, false), 
-                   m_beamAnimationY("src/resources/Animations/defaultBeamY.png", 8, 0.0f, 0.0f, false) {
+Player::Player() : m_beamAnimationX(Assets::defaultBeamX, 8, 0.0f, 0.0f, false), 
+                   m_beamAnimationY(Assets::defaultBeamY, 8, 0.0f, 0.0f, false) {
 
     // std::array derived from animation class
     m_animationTextures[0] = LoadTexture("src/resources/Animations/eyeball-Idle.png"); 
@@ -37,6 +37,9 @@ Player::~Player() {
     UnloadTexture(m_animationTextures[1]);
     UnloadTexture(m_animationTextures[2]);
     UnloadTexture(m_animationTextures[3]); 
+    UnloadTexture(m_animationTextures[4]);
+    UnloadTexture(m_animationTextures[5]);
+    UnloadTexture(m_animationTextures[6]);
     m_beamAnimationX.~Animation();
     m_beamAnimationY.~Animation();
 }

@@ -5,14 +5,15 @@
 #include <cstdint>
 #include <string>
 #include "utilities.h"
+#include "assets.h"
 
 class Animation {
 
     public: 
 
-        Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY, bool random);
+        Animation(Texture2D texture, uint8_t frameCount, float positionX, float positionY, bool random);
         Animation();
-        virtual ~Animation();
+        ~Animation();
         
         // sprite
         virtual void drawSprite();
@@ -37,7 +38,7 @@ class Animation {
         
     protected:
 
-        std::array<Texture2D, 10> m_animationTextures; // textures for the animation 
+        Texture2D m_texture; // textures for the animation 
         Rectangle m_animationRect{0.0f}; // source rectangle for the animation
         Rectangle m_hitboxRect{0.0f}; // hitbox for the animation
         uint8_t m_frameCount{0}; 

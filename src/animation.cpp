@@ -1,13 +1,13 @@
 #include "animation.h"
 
 /*-------------------------------*/
-Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, float positionY, bool random){
+Animation::Animation(Texture2D texture, uint8_t frameCount, float positionX, float positionY, bool random){
 
     // Load textures
-    m_animationTextures[0] = LoadTexture(filePath);
+    m_texture = texture;
 
-    m_defaultWidth = static_cast<float>(m_animationTextures[0].width) / static_cast<float>(frameCount);
-    m_defaultHeight = static_cast<float>(m_animationTextures[0].height);
+    m_defaultWidth = static_cast<float>(m_texture.width) / static_cast<float>(frameCount);
+    m_defaultHeight = static_cast<float>(m_texture.height);
     // Rectangles 
     m_animationRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight }; 
     m_hitboxRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight };
@@ -22,11 +22,9 @@ Animation::Animation(const char* filePath, uint8_t frameCount, float positionX, 
 
 }
 
-Animation::Animation() {};
+Animation::Animation() {}
 
-Animation::~Animation(){
-    UnloadTexture(m_animationTextures[0]);
-}
+Animation::~Animation() {}
 
 /*--------SPRITE-METHODS-----------*/
 void Animation::animateSprite(){
@@ -52,7 +50,7 @@ void Animation::animateSpriteRandom(){
 }
 
 void Animation::drawSprite(){
-    DrawTexturePro(m_animationTextures[0], m_animationRect, {m_positionX, m_positionY, static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, m_rotation, WHITE);
+    DrawTexturePro(m_texture, m_animationRect, {m_positionX, m_positionY, static_cast<float>(m_texture.width) / static_cast<float>(m_frameCount), static_cast<float>(m_texture.height)}, {0.0f, 0.0f}, m_rotation, WHITE);
 }
 
 void Animation::drawHitbox(){

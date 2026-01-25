@@ -12,7 +12,7 @@ class Game {
 
     public:
         void runGame();
-        void DrawLight(Vector2 position, float radius, Color color);
+        void drawLight(Vector2 position, float radius, Color color);
         void controls();
 
     private:

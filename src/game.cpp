@@ -1,56 +1,9 @@
 #include "game.h"
+#include "particles.h"
 #include <iostream>
+#include <vector>
 
-struct Particle { 
-    Vector2 pos; 
-    Vector2 vel; 
-    Color tint;
-    float life{0.0f}; 
-    float rotation{0.0f}; 
-    float scale{0.0f}; 
-    int textureIndex{0}; 
-};
-
-std::array<Texture2D, 3> particleTextures;
-std::array<Particle, 100> particles;
-
-void Explode(Vector2 pos, Color tint, int textureIndex) {
-    for (int i{0}; i < 10; i++) {
-        for (auto& particle : particles) {
-            if (particle.life <= 0) {
-                particle = {pos, {static_cast<float>(GetRandomValue(-100,100)), static_cast<float>(GetRandomValue(-100,100))}, 
-                            tint, 1.0f, static_cast<float>(GetRandomValue(0, 360)), 1.0f, textureIndex};
-                break;
-            }
-        }
-    }
-}
-
-void updateParticles() {
-
-    for (auto& particle : particles) {
-        if (particle.life > 0.0f) {
-
-            particle.pos.x += particle.vel.x * GetFrameTime();
-            particle.pos.y += particle.vel.y * GetFrameTime();
-            particle.life -= GetFrameTime();
-            particle.scale = particle.life; 
-
-            if (particle.life <= 0.0f) {
-                particle.tint.a = 0; 
-            }
-
-            Texture2D& texture = particleTextures[particle.textureIndex];
-            Rectangle source = {0.0f, 0.0f, static_cast<float>(texture.width), static_cast<float>(texture.height)};
-            Rectangle dest = {particle.pos.x, particle.pos.y, texture.width * particle.scale, texture.height * particle.scale};
-            Vector2 origin = {texture.width * particle.scale * 0.5f, texture.height * particle.scale * 0.5f};
-            DrawTexturePro(texture, source, dest, origin, particle.rotation, particle.tint);
-        }
-    }
-}
-
-
-void Game::DrawLight(Vector2 position, float radius, Color color)
+void Game::drawLight(Vector2 position, float radius, Color color)
 {
     DrawCircleGradient(
         static_cast<int>(position.x) + 16,
@@ -65,20 +18,25 @@ void Game::runGame(){
 
     // setup
     Utilities::init();
+    Assets::loadAssets();
 
     // light map
     RenderTexture2D lightMap = LoadRenderTexture(config::screenWidth, config::screenHeight);
 
     // animations
-    Animation fireAnimation("src/resources/Animations/fireSpriteAnimation.png", 6, m_centerX, m_centerY, true);
-    Animation coinAnimation("src/resources/Animations/coin_gold.png", 8, m_centerX, m_centerY, false);
+    Animation fireAnimation(Assets::fireAnimation, 6, m_centerX, m_centerY, true);
+    Animation coinAnimation(Assets::coinAnimation, 8, m_centerX, m_centerY, false);
 
     // player
     Player playerAnimation;
-
-    // enemy
-    Enemy enemy("src/resources/Animations/enemyAnimation.png", 6);
     
+    // enemies
+    std::vector<Enemy> enemies;
+    enemies.reserve(10);
+    for(int i{0}; i<10; i++){
+        enemies.emplace_back(Enemy(Assets::enemy, 6));
+    } 
+
     // camera
     GameCamera gameCamera;
 
@@ -92,10 +50,8 @@ void Game::runGame(){
     SetMusicVolume(music, 0.01f);
     music.looping = true;
 
-    // particle (temp)
-    particleTextures[0] = (LoadTexture("src/resources/Textures/blood1.png"));
-    particleTextures[1] = (LoadTexture("src/resources/Textures/blood2.png"));
-    particleTextures[2] = (LoadTexture("src/resources/Textures/blood3.png"));
+    // particle
+    Particles particles;
 
     while (!WindowShouldClose())
     {   
@@ -132,17 +88,19 @@ void Game::runGame(){
             PlaySound(coin);
         }
 
-        enemy.setEnemySpeed(2.0f);
-        if(CheckCollisionRecs(playerAnimation.getBeamAttackRect(), enemy.getHitboxRect())) {
-            enemy.takeDamage(0.25f); 
-            enemy.setEnemySpeed(0.5f);
+        for(Enemy &enemy : enemies){
+            enemy.setEnemySpeed(2.0f);
+            if(CheckCollisionRecs(playerAnimation.getBeamAttackRect(), enemy.getHitboxRect())) {
+                enemy.takeDamage(0.25f); 
+                enemy.setEnemySpeed(0.5f);
+            }
             if(enemy.getHealth() <= 0.0f){
-                Explode(enemy.getPosition(), RED, rand() % particleTextures.size());
+                particles.explode(enemy.getPosition(), RED, rand() % particles.m_particleTextures.size());
                 enemy.setHealth(100.0f); 
                 enemy.setPosition(Vector2{static_cast<float>(GetRandomValue(0, config::screenWidth)), static_cast<float>(GetRandomValue(0, config::screenWidth))}); 
             }
-        }  
-
+        }
+        
         BeginDrawing(); 
                     
             BeginMode2D(gameCamera.camera); 
@@ -150,9 +108,11 @@ void Game::runGame(){
                 fireAnimation.updateSprite();
                 coinAnimation.updateSprite();
                 playerAnimation.updateSprite();
-                enemy.updateSprite();
-                //enemy.chasePlayer(playerAnimation.getPosition());
-                updateParticles(); 
+                for(Enemy &enemy : enemies){
+                    enemy.updateSprite();
+                    enemy.chasePlayer(playerAnimation.getPosition());
+                }
+                particles.updateParticles(); 
             EndMode2D();   
 
             BeginTextureMode(lightMap);  
@@ -163,7 +123,7 @@ void Game::runGame(){
                     //DrawLight(GetMousePosition(), 120, RED);
                     Vector2 screenPos2 = GetWorldToScreen2D(fireAnimation.getPosition(), gameCamera.camera);
                     float flicker = 140.0 + sin(GetTime() * 10.0) * 10.0;
-                    DrawLight(screenPos2, flicker, ORANGE);
+                    drawLight(screenPos2, flicker, ORANGE);
                 EndBlendMode();
             EndTextureMode(); 
 
@@ -178,6 +138,7 @@ void Game::runGame(){
     fireAnimation.~Animation();
     coinAnimation.~Animation();
     playerAnimation.~Player();
+    Assets::unloadAssets();
     soundSystem.~SoundSystem();
     UnloadMusicStream(music);
 
