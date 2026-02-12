@@ -19,6 +19,7 @@ class Animation {
         virtual void drawSprite();
         virtual void updateSprite();
         virtual void drawHitbox();
+        void drawAnimationBoxLines();
         void animateSprite();
         void animateSpriteRandom();
     
@@ -34,7 +35,8 @@ class Animation {
         // setters
         void setPosition(Vector2 position);
         void setRotation(float rotation);
-        void setHitbox(Vector2 dimensions);
+        void setHitboxDimensions(Vector2 dimensions);
+        void setHitboxOffset(Vector2 pos);
         
     protected:
 
@@ -52,5 +54,7 @@ class Animation {
         float m_positionX{0.0f}; 
         float m_positionY{0.0f}; 
         float m_rotation{0.0f};
+        float m_offsetX{0.0f};
+        float m_offsetY{0.0f};
 
 };

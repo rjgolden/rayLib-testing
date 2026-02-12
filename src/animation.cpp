@@ -53,15 +53,20 @@ void Animation::drawSprite(){
     DrawTexturePro(m_texture, m_animationRect, {m_positionX, m_positionY, static_cast<float>(m_texture.width) / static_cast<float>(m_frameCount), static_cast<float>(m_texture.height)}, {0.0f, 0.0f}, m_rotation, WHITE);
 }
 
+void Animation::drawAnimationBoxLines(){
+    DrawRectangleLines(m_positionX, m_positionY, m_animationRect.width, m_animationRect.height, GREEN);
+}
+
 void Animation::drawHitbox(){
-    Utilities::DrawRectangleLinesPro({m_positionX, m_positionY, m_hitboxRect.width, m_hitboxRect.height}, {0.0f, 0.0f}, RED, m_rotation);
+    DrawRectangleLines(m_positionX + m_offsetX, m_positionY + m_offsetY, m_hitboxRect.width, m_hitboxRect.height, RED);
 }
 
 void Animation::updateSprite(){
-    if(m_random) animateSpriteRandom();
+    if(m_random)animateSpriteRandom();
     else animateSprite();
     drawSprite();
     drawHitbox();
+    drawAnimationBoxLines();
 }
 
 /*-------------GETTERS------------*/
@@ -90,7 +95,7 @@ Vector2 Animation::getDefaultDimensions(){
 }
 
 Rectangle Animation::getHitboxRect() { 
-    return Rectangle{m_positionX, m_positionY, m_hitboxRect.width, m_hitboxRect.height};
+    return Rectangle{m_positionX + m_offsetX, m_positionY + m_offsetY, m_hitboxRect.width, m_hitboxRect.height};
 }
 
 /*-------------SETTERS------------*/
@@ -103,7 +108,12 @@ void Animation::setRotation(float rotation){
     m_rotation = rotation;
 }
 
-void Animation::setHitbox(Vector2 dimensions){
+void Animation::setHitboxDimensions(Vector2 dimensions){
     m_hitboxRect.width = dimensions.x;
     m_hitboxRect.height = dimensions.y;
+}
+
+void Animation::setHitboxOffset(Vector2 pos){
+    m_offsetX = pos.x;
+    m_offsetY = pos.y;
 }

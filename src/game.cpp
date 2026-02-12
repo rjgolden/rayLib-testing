@@ -119,16 +119,17 @@ void Game::runGame(){
                 playerAnimation.updateSprite();
                 for(Enemy &enemy : enemies){
                     enemy.updateSprite();
-                    enemy.chasePlayer(playerAnimation.getPosition());
+                    //enemy.chasePlayer(playerAnimation.getPosition());
                 }
                 particles.updateParticles();
                 
             EndMode2D(); 
-
+            
+            // UI (temp)
             std::string enemiesKilledStr = std::to_string(enemiesKilled);
             const char* enemiesKilledCStr = enemiesKilledStr.c_str();
-            DrawText("Enemies Killed: ", 20, 20, 20, YELLOW);
-            DrawText(enemiesKilledCStr, 180, 20, 20, YELLOW);
+            DrawText("Enemies Killed: ", 20 * m_scale, 20, 20 * m_scale, YELLOW);
+            DrawText(enemiesKilledCStr, 180 * m_scale, 20, 20 * m_scale, YELLOW);
 
             BeginTextureMode(lightMap);  
 

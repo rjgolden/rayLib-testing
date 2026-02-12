@@ -30,6 +30,9 @@ Player::Player() : m_beamAnimationX(Assets::defaultBeamX, 8, 0.0f, 0.0f, false),
     m_defaultBeamSizeX = m_beamAnimationX.getDefaultDimensions();
     m_defaultBeamSizeY = m_beamAnimationY.getDefaultDimensions();
 
+    m_defaultBeamSizeX.y -= 20.0f;
+    m_defaultBeamSizeY.x -= 20.0f;
+
 }
 
 /*--------SPRITE-METHODS-----------*/
@@ -249,16 +252,22 @@ void Player::handleKeyboardAttack() {
     static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
     m_attackSound.looping = true;
     SetMusicVolume(m_attackSound, 0.05f);
+
+    static Vector2 attackLeftPos = {0.0f, 10.0f};
+    static Vector2 attackRightPos = {0.0f, 10.0f};
+    static Vector2 attackUpPos = {11.0f, 0.0f};
+    static Vector2 attackDownPos = {11.0f, 0.0f};
     m_beamAnimationX.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
-    m_beamAnimationX.setHitbox(Vector2{0.0f, 0.0f});
+    m_beamAnimationX.setHitboxDimensions(Vector2{0.0f, 0.0f});
     m_beamAnimationY.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
-    m_beamAnimationY.setHitbox(Vector2{0.0f, 0.0f});
+    m_beamAnimationY.setHitboxDimensions(Vector2{0.0f, 0.0f});
 
     if(IsKeyDown(KEY_LEFT)){
         m_idle = false;
         m_state = ATTACK_LEFT; 
         m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 12.0f}));
-        m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+        m_beamAnimationX.setHitboxOffset(attackLeftPos);
+        m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
@@ -267,7 +276,8 @@ void Player::handleKeyboardAttack() {
         m_idle = false;
         m_state = ATTACK_RIGHT;
         m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 12.0f}));
-        m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+        m_beamAnimationX.setHitboxOffset(attackRightPos);
+        m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
@@ -276,7 +286,8 @@ void Player::handleKeyboardAttack() {
         m_idle = false;
         m_state = UP; 
         m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY - 96.0f}));
-        m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+        m_beamAnimationY.setHitboxOffset(attackUpPos);
+        m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
         m_beamAnimationY.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
@@ -285,7 +296,8 @@ void Player::handleKeyboardAttack() {
         m_idle = false;
         m_state = ATTACK_DOWN; 
         m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
-        m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+        m_beamAnimationY.setHitboxOffset(attackDownPos);
+        m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
         drawSprite(); 
         m_beamAnimationY.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
@@ -310,7 +322,7 @@ void Player::handleControllerAttack() {
         m_idle = false;
         m_state = ATTACK_LEFT; 
         m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
-        m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+        m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
@@ -319,7 +331,7 @@ void Player::handleControllerAttack() {
         m_idle = false;
         m_state = ATTACK_RIGHT;
         m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
-        m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+        m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
@@ -328,7 +340,7 @@ void Player::handleControllerAttack() {
         m_idle = false;
         m_state = UP; 
         m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY - 96.0f}));
-        m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+        m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
         m_beamAnimationY.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
@@ -337,7 +349,7 @@ void Player::handleControllerAttack() {
         m_idle = false;
         m_state = ATTACK_DOWN; 
         m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
-        m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+        m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
         drawSprite(); 
         m_beamAnimationY.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
@@ -354,7 +366,7 @@ void Player::handleControllerAttack() {
             m_idle = false;
             m_state = ATTACK_LEFT; 
             m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
-            m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+            m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
             m_beamAnimationX.updateSprite();
             if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
             UpdateMusicStream(m_attackSound); 
@@ -363,7 +375,7 @@ void Player::handleControllerAttack() {
             m_idle = false;
             m_state = ATTACK_RIGHT;
             m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
-            m_beamAnimationX.setHitbox(m_defaultBeamSizeX);
+            m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
             m_beamAnimationX.updateSprite(); 
             if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
             UpdateMusicStream(m_attackSound); 
@@ -372,7 +384,7 @@ void Player::handleControllerAttack() {
             m_idle = false;
             m_state = UP; 
             m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY - 96.0f}));
-            m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+            m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
             m_beamAnimationY.updateSprite(); 
             if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
             UpdateMusicStream(m_attackSound); 
@@ -381,7 +393,7 @@ void Player::handleControllerAttack() {
             m_idle = false;
             m_state = ATTACK_DOWN; 
             m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
-            m_beamAnimationY.setHitbox(m_defaultBeamSizeY);
+            m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
             drawSprite(); 
             m_beamAnimationY.updateSprite();
             if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
