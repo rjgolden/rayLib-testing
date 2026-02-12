@@ -33,15 +33,18 @@ void Game::runGame(){
     // enemies
     std::vector<Enemy> enemies;
     enemies.reserve(10);
-    for(int i{0}; i<10; i++){
+    for(int i{0}; i<5; i++){
         enemies.emplace_back(Enemy(Assets::enemy, 6));
-    } 
+    }
+    for(int i{0}; i<5; i++){
+        enemies.emplace_back(Enemy(Assets::flyEnemy, 6));
+    }
 
     // camera
     GameCamera gameCamera;
 
     // sound stuff
-    SoundSystem soundSystem;  
+    SoundSystem initSoundSystem;  
     Sound coin = LoadSound("src/resources/Sounds/coin.mp3");
 
     // music
@@ -50,8 +53,12 @@ void Game::runGame(){
     SetMusicVolume(music, 0.01f);
     music.looping = true;
 
-    // particle
+    // particles
     Particles particles;
+
+
+    // temp
+    int enemiesKilled{0};
 
     while (!WindowShouldClose())
     {   
@@ -95,15 +102,17 @@ void Game::runGame(){
                 enemy.setEnemySpeed(0.5f);
             }
             if(enemy.getHealth() <= 0.0f){
+                enemiesKilled++;
                 particles.explode(enemy.getPosition(), RED, rand() % particles.m_particleTextures.size());
-                enemy.setHealth(100.0f); 
-                enemy.setPosition(Vector2{static_cast<float>(GetRandomValue(0, config::screenWidth)), static_cast<float>(GetRandomValue(0, config::screenWidth))}); 
+                enemy.setHealth(20.0f); 
+                enemy.setPositionRandom();
             }
         }
-        
+
         BeginDrawing(); 
                     
             BeginMode2D(gameCamera.camera); 
+
                 Utilities::drawBackground();
                 fireAnimation.updateSprite();
                 coinAnimation.updateSprite();
@@ -112,19 +121,26 @@ void Game::runGame(){
                     enemy.updateSprite();
                     enemy.chasePlayer(playerAnimation.getPosition());
                 }
-                particles.updateParticles(); 
-            EndMode2D();   
+                particles.updateParticles();
+                
+            EndMode2D(); 
+
+            std::string enemiesKilledStr = std::to_string(enemiesKilled);
+            const char* enemiesKilledCStr = enemiesKilledStr.c_str();
+            DrawText("Enemies Killed: ", 20, 20, 20, YELLOW);
+            DrawText(enemiesKilledCStr, 180, 20, 20, YELLOW);
 
             BeginTextureMode(lightMap);  
-                ClearBackground(LIGHTGRAY); // screen tint (black for complete dark, etc.)
+
+                ClearBackground(GRAY); // screen tint (black for complete dark, etc.)
                 BeginBlendMode(BLEND_ADDITIVE); 
-                    //Vector2 screenPos = GetWorldToScreen2D(playerAnimation.getPosition(), gameCamera.camera);
-                    //DrawLight(screenPos, 150, Color{255, 240, 200, 255});
-                    //DrawLight(GetMousePosition(), 120, RED);
+                    Vector2 screenPos = GetWorldToScreen2D(playerAnimation.getPosition(), gameCamera.camera);
+                    drawLight(screenPos, 150, Color{255, 240, 200, 255});
                     Vector2 screenPos2 = GetWorldToScreen2D(fireAnimation.getPosition(), gameCamera.camera);
                     float flicker = 140.0 + sin(GetTime() * 10.0) * 10.0;
                     drawLight(screenPos2, flicker, ORANGE);
                 EndBlendMode();
+
             EndTextureMode(); 
 
             BeginBlendMode(BLEND_MULTIPLIED); 
@@ -138,8 +154,9 @@ void Game::runGame(){
     fireAnimation.~Animation();
     coinAnimation.~Animation();
     playerAnimation.~Player();
+    particles.~Particles();
+    initSoundSystem.~SoundSystem();
     Assets::unloadAssets();
-    soundSystem.~SoundSystem();
     UnloadMusicStream(music);
 
     CloseWindow();

@@ -90,3 +90,8 @@ void Enemy::setEnemySpeed(float speed){
     m_enemySpeed = speed;
 }
 
+void Enemy::setPositionRandom(){
+    m_positionX = static_cast<float>(GetRandomValue(0, config::screenWidth)) + config::screenWidth;
+    m_positionY = static_cast<float>(GetRandomValue(0, config::screenHeight)) + config::screenHeight;
+}
+

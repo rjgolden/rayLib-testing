@@ -24,9 +24,9 @@ class Enemy : public Animation {
         // setters 
         void setHealth(float health);
         void setEnemySpeed(float speed);
+        void setPositionRandom();
 
     private:
-        // enemy variables
         float m_enemySpeed{2.0f};
 
         // health stuff

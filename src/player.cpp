@@ -32,18 +32,6 @@ Player::Player() : m_beamAnimationX(Assets::defaultBeamX, 8, 0.0f, 0.0f, false),
 
 }
 
-Player::~Player() {
-    UnloadTexture(m_animationTextures[0]);
-    UnloadTexture(m_animationTextures[1]);
-    UnloadTexture(m_animationTextures[2]);
-    UnloadTexture(m_animationTextures[3]); 
-    UnloadTexture(m_animationTextures[4]);
-    UnloadTexture(m_animationTextures[5]);
-    UnloadTexture(m_animationTextures[6]);
-    m_beamAnimationX.~Animation();
-    m_beamAnimationY.~Animation();
-}
-
 /*--------SPRITE-METHODS-----------*/
 void Player::drawSprite() {
     DrawTexturePro(*m_currentTexture, m_animationRect, {static_cast<float>(m_positionX), static_cast<float>(m_positionY), static_cast<float>(m_animationTextures[0].width) / static_cast<float>(m_frameCount), static_cast<float>(m_animationTextures[0].height)}, {0.0f, 0.0f}, m_rotation, WHITE);

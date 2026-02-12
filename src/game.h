@@ -13,7 +13,6 @@ class Game {
     public:
         void runGame();
         void drawLight(Vector2 position, float radius, Color color);
-        void controls();
 
     private:
         float m_scale{1.0f};  
