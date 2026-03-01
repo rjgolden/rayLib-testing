@@ -315,13 +315,22 @@ void Player::handleControllerAttack() {
     
     static Music m_attackSound = LoadMusicStream("src/resources/Sounds/laser.wav");
     m_attackSound.looping = true;
-
-    // button attack
+    SetMusicVolume(m_attackSound, 0.05f);
+    
+    static Vector2 attackLeftPos = {0.0f, 10.0f};
+    static Vector2 attackRightPos = {0.0f, 10.0f};
+    static Vector2 attackUpPos = {11.0f, 0.0f};
+    static Vector2 attackDownPos = {11.0f, 0.0f};
+    m_beamAnimationX.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
+    m_beamAnimationX.setHitboxDimensions(Vector2{0.0f, 0.0f});
+    m_beamAnimationY.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
+    m_beamAnimationY.setHitboxDimensions(Vector2{0.0f, 0.0f});
 
     if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)){
         m_idle = false;
         m_state = ATTACK_LEFT; 
-        m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
+        m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 12.0f}));
+        m_beamAnimationX.setHitboxOffset(attackLeftPos);
         m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
@@ -330,7 +339,8 @@ void Player::handleControllerAttack() {
     else if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)){
         m_idle = false;
         m_state = ATTACK_RIGHT;
-        m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
+        m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 12.0f}));
+        m_beamAnimationX.setHitboxOffset(attackRightPos);
         m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
         m_beamAnimationX.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
@@ -340,6 +350,7 @@ void Player::handleControllerAttack() {
         m_idle = false;
         m_state = UP; 
         m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY - 96.0f}));
+        m_beamAnimationY.setHitboxOffset(attackUpPos);
         m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
         m_beamAnimationY.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
@@ -349,14 +360,21 @@ void Player::handleControllerAttack() {
         m_idle = false;
         m_state = ATTACK_DOWN; 
         m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
+        m_beamAnimationY.setHitboxOffset(attackDownPos);
         m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
         drawSprite(); 
         m_beamAnimationY.updateSprite();
         if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
         UpdateMusicStream(m_attackSound); 
     }
+    else {
+        if (IsMusicStreamPlaying(m_attackSound)) PauseMusicStream(m_attackSound);
+        if (m_state == ATTACK_RIGHT) m_state = RIGHT;
+        if (m_state == ATTACK_LEFT) m_state = LEFT;
+        if (m_state == ATTACK_DOWN) m_state = DOWN;
+    }
 
-    //right stick movement
+    //right stick movement - same function as d-pad
 
     m_axisXR = GetGamepadAxisMovement(0, GAMEPAD_AXIS_RIGHT_X);
     m_axisYR = GetGamepadAxisMovement(0, GAMEPAD_AXIS_RIGHT_Y);
@@ -365,7 +383,8 @@ void Player::handleControllerAttack() {
         if(m_axisXR < -0.3f){
             m_idle = false;
             m_state = ATTACK_LEFT; 
-            m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 16.0f}));
+            m_beamAnimationX.setPosition(Vector2({m_positionX - 120.0f, m_positionY + 12.0f}));
+            m_beamAnimationX.setHitboxOffset(attackLeftPos);
             m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
             m_beamAnimationX.updateSprite();
             if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
@@ -374,9 +393,10 @@ void Player::handleControllerAttack() {
         else if(m_axisXR > 0.3f) {
             m_idle = false;
             m_state = ATTACK_RIGHT;
-            m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 16.0f}));
+            m_beamAnimationX.setPosition(Vector2({m_positionX + 24.0f, m_positionY + 12.0f}));
+            m_beamAnimationX.setHitboxOffset(attackRightPos);
             m_beamAnimationX.setHitboxDimensions(m_defaultBeamSizeX);
-            m_beamAnimationX.updateSprite(); 
+            m_beamAnimationX.updateSprite();
             if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
             UpdateMusicStream(m_attackSound); 
         }
@@ -384,8 +404,9 @@ void Player::handleControllerAttack() {
             m_idle = false;
             m_state = UP; 
             m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY - 96.0f}));
+            m_beamAnimationY.setHitboxOffset(attackUpPos);
             m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
-            m_beamAnimationY.updateSprite(); 
+            m_beamAnimationY.updateSprite();
             if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
             UpdateMusicStream(m_attackSound); 
         }
@@ -393,11 +414,18 @@ void Player::handleControllerAttack() {
             m_idle = false;
             m_state = ATTACK_DOWN; 
             m_beamAnimationY.setPosition(Vector2({m_positionX, m_positionY + 32.0f}));
+            m_beamAnimationY.setHitboxOffset(attackDownPos);
             m_beamAnimationY.setHitboxDimensions(m_defaultBeamSizeY);
             drawSprite(); 
             m_beamAnimationY.updateSprite();
             if (!IsMusicStreamPlaying(m_attackSound)) PlayMusicStream(m_attackSound);
             UpdateMusicStream(m_attackSound);
+        }
+        else {
+            if (IsMusicStreamPlaying(m_attackSound)) PauseMusicStream(m_attackSound);
+            if (m_state == ATTACK_RIGHT) m_state = RIGHT;
+            if (m_state == ATTACK_LEFT) m_state = LEFT;
+            if (m_state == ATTACK_DOWN) m_state = DOWN;
         }
     }
     
