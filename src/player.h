@@ -3,7 +3,7 @@
 #include <cmath>
 #include <memory>
 #include "animation.h"
-#include "config.h"
+#include "global.h"
 
 class Player : public Animation {
 

@@ -21,7 +21,7 @@ void Game::runGame(){
     Assets::loadAssets();
 
     // light map
-    RenderTexture2D lightMap = LoadRenderTexture(config::screenWidth, config::screenHeight);
+    RenderTexture2D lightMap = LoadRenderTexture(Global::screenWidth, Global::screenHeight);
 
     // animations
     Animation fireAnimation(Assets::fireAnimation, 6, m_centerX, m_centerY, true);
@@ -70,18 +70,18 @@ void Game::runGame(){
 
             m_scale = Utilities::toggleFullScreenWindow();
 
-            m_centerX = (static_cast<float>(config::screenWidth)*m_scale)/2.0f;
-            m_centerY = (static_cast<float>(config::screenHeight)*m_scale)/2.0f;
+            m_centerX = (static_cast<float>(Global::screenWidth)*m_scale)/2.0f;
+            m_centerY = (static_cast<float>(Global::screenHeight)*m_scale)/2.0f;
 
-            lightMap = LoadRenderTexture(config::screenWidth*static_cast<int>(m_scale), config::screenHeight*static_cast<int>(m_scale));
+            lightMap = LoadRenderTexture(Global::screenWidth*static_cast<int>(m_scale), Global::screenHeight*static_cast<int>(m_scale));
 
             gameCamera.camera.zoom = m_scale;
             gameCamera.camera.offset = {m_centerX, m_centerY};
         }
         
         if(IsKeyDown(KEY_C)) {
-            gameCamera.camera.target.x += (m_centerX - gameCamera.camera.target.x) * (config::cameraLerp * m_deltaTime);
-            gameCamera.camera.target.y += (m_centerY - gameCamera.camera.target.y) * (config::cameraLerp * m_deltaTime);
+            gameCamera.camera.target.x += (m_centerX - gameCamera.camera.target.x) * (Global::cameraLerp * m_deltaTime);
+            gameCamera.camera.target.y += (m_centerY - gameCamera.camera.target.y) * (Global::cameraLerp * m_deltaTime);
         }
         else{
             gameCamera.camera.target.x += ((playerAnimation.getPositionX() + 16.0f) - gameCamera.camera.target.x) * (playerAnimation.getPlayerSpeed() * m_deltaTime);

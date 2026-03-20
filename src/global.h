@@ -1,6 +1,6 @@
 #pragma once
 
-namespace config {
+namespace Global {
 
     constexpr int screenWidth{480};
     constexpr int screenHeight{270};

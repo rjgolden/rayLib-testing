@@ -1,9 +1,9 @@
 #include "utilities.h"
 
 void Utilities::init(){
-    InitWindow(config::screenWidth, config::screenHeight, "Test");
-    SetWindowMinSize(config::screenWidth, config::screenHeight);
-    SetTargetFPS(config::FPS);  
+    InitWindow(Global::screenWidth, Global::screenHeight, "Test");
+    SetWindowMinSize(Global::screenWidth, Global::screenHeight);
+    SetTargetFPS(Global::FPS);  
     SetWindowIcon(LoadImage("src/resources/Textures/space.png")); 
 }
 
@@ -66,7 +66,7 @@ float Utilities::toggleFullScreenWindow(){
     } 
     else{
         ToggleFullscreen();
-        SetWindowSize(config::screenWidth, config::screenHeight);
+        SetWindowSize(Global::screenWidth, Global::screenHeight);
         return 1.0f; // 480x270 default scale
     }
 

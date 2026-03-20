@@ -24,8 +24,8 @@ Player::Player() : m_beamAnimationX(Assets::defaultBeamX, 8, 0.0f, 0.0f, false),
     m_hitboxRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight };
 
     // position - derived from animation class
-    m_positionX = static_cast<float>(config::halfScreenWidth);
-    m_positionY = static_cast<float>(config::halfScreenHeight); 
+    m_positionX = static_cast<float>(Global::halfScreenWidth);
+    m_positionY = static_cast<float>(Global::halfScreenHeight); 
 
     m_defaultBeamSizeX = m_beamAnimationX.getDefaultDimensions();
     m_defaultBeamSizeY = m_beamAnimationY.getDefaultDimensions();

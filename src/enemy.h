@@ -4,6 +4,7 @@
 #include <cstdint>
 #include "animation.h"
 #include "assets.h"
+#include "global.h"
 
 class Enemy : public Animation {
         

@@ -18,8 +18,8 @@ Enemy::Enemy(Texture2D texture, uint8_t frameCount){
     m_frameCount = frameCount;
     
     // position and speed - dervied from animation class
-    m_positionX = GetRandomValue(0, config::screenWidth); 
-    m_positionY = GetRandomValue(0, config::screenHeight); 
+    m_positionX = GetRandomValue(0, Global::screenWidth); 
+    m_positionY = GetRandomValue(0, Global::screenHeight); 
 
 }
 
@@ -91,7 +91,7 @@ void Enemy::setEnemySpeed(float speed){
 }
 
 void Enemy::setPositionRandom(){
-    m_positionX = static_cast<float>(GetRandomValue(0, config::screenWidth)) + config::screenWidth;
-    m_positionY = static_cast<float>(GetRandomValue(0, config::screenHeight)) + config::screenHeight;
+    m_positionX = static_cast<float>(GetRandomValue(0, Global::screenWidth)) + Global::screenWidth;
+    m_positionY = static_cast<float>(GetRandomValue(0, Global::screenHeight)) + Global::screenHeight;
 }
 

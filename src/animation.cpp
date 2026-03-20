@@ -62,7 +62,7 @@ void Animation::drawHitbox(){
 }
 
 void Animation::updateSprite(){
-    if(m_random)animateSpriteRandom();
+    if(m_random) animateSpriteRandom();
     else animateSprite();
     drawSprite();
     drawHitbox();
