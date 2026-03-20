@@ -1,10 +1,11 @@
 #include "utilities.h"
 
 void Utilities::init(){
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(Global::screenWidth, Global::screenHeight, "Test");
     SetWindowMinSize(Global::screenWidth, Global::screenHeight);
-    SetTargetFPS(Global::FPS);  
     SetWindowIcon(LoadImage("src/resources/Textures/space.png")); 
+    SetTargetFPS(Global::FPS);  
 }
 
 void Utilities::drawBackground(){
@@ -51,25 +52,15 @@ void Utilities::drawBackground(){
 
 }
 
-float Utilities::toggleFullScreenWindow(){
-    /*---------------------------------| 
-    |  Only allow 16:9 raito           |
-    |  (480x270) scale = 1.0f;         |
-    |  (1920x1080) scale = 4.0f.       |
-    |---------------------------------*/
-
-    if(!IsWindowFullscreen()){
+void Utilities::toggleFullscreenWindow(){
+    if (!IsWindowFullscreen()) {
         int monitor = GetCurrentMonitor();
         SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
         ToggleFullscreen();
-        return 4.0f; // 1920x1080 default fullscreen scale
-    } 
-    else{
+    } else {
         ToggleFullscreen();
         SetWindowSize(Global::screenWidth, Global::screenHeight);
-        return 1.0f; // 480x270 default scale
     }
-
 }
 
 void Utilities::DrawRectangleLinesPro(Rectangle rec, Vector2 origin, Color color, float rotation) {

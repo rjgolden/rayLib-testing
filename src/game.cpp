@@ -8,7 +8,7 @@ void Game::drawLight(Vector2 position, float radius, Color color)
     DrawCircleGradient(
         static_cast<int>(position.x) + 16,
         static_cast<int>(position.y) + 32,
-        radius * m_scale,
+        radius,
         color,
         BLANK
     );
@@ -19,9 +19,6 @@ void Game::runGame(){
     // setup
     Utilities::init();
     Assets::loadAssets();
-
-    // light map
-    RenderTexture2D lightMap = LoadRenderTexture(Global::screenWidth, Global::screenHeight);
 
     // animations
     Animation fireAnimation(Assets::fireAnimation, 6, m_centerX, m_centerY, true);
@@ -42,6 +39,8 @@ void Game::runGame(){
 
     // camera
     GameCamera gameCamera;
+    gameCamera.camera.zoom = 1.0f;
+    gameCamera.camera.offset = {Global::halfScreenWidth, Global::halfScreenHeight};
 
     // sound stuff
     SoundSystem initSoundSystem;  
@@ -56,9 +55,14 @@ void Game::runGame(){
     // particles
     Particles particles;
 
-
     // temp
     int enemiesKilled{0};
+
+    // light map
+    RenderTexture2D lightMap = LoadRenderTexture(Global::screenWidth, Global::screenHeight);
+    SetTextureFilter(lightMap.texture, TEXTURE_FILTER_POINT);
+    RenderTexture2D target = LoadRenderTexture(Global::screenWidth, Global::screenHeight);
+    SetTextureFilter(target.texture, TEXTURE_FILTER_POINT); 
 
     while (!WindowShouldClose())
     {   
@@ -66,19 +70,10 @@ void Game::runGame(){
         UpdateMusicStream(music);
         m_deltaTime = GetFrameTime();
 
-        if(IsKeyPressed(KEY_F)) {
-
-            m_scale = Utilities::toggleFullScreenWindow();
-
-            m_centerX = (static_cast<float>(Global::screenWidth)*m_scale)/2.0f;
-            m_centerY = (static_cast<float>(Global::screenHeight)*m_scale)/2.0f;
-
-            lightMap = LoadRenderTexture(Global::screenWidth*static_cast<int>(m_scale), Global::screenHeight*static_cast<int>(m_scale));
-
-            gameCamera.camera.zoom = m_scale;
-            gameCamera.camera.offset = {m_centerX, m_centerY};
-        }
+        // sets fullscreen
+        if(IsKeyPressed(KEY_F)) Utilities::toggleFullscreenWindow();
         
+        // moves camera to origin
         if(IsKeyDown(KEY_C)) {
             gameCamera.camera.target.x += (m_centerX - gameCamera.camera.target.x) * (Global::cameraLerp * m_deltaTime);
             gameCamera.camera.target.y += (m_centerY - gameCamera.camera.target.y) * (Global::cameraLerp * m_deltaTime);
@@ -88,6 +83,7 @@ void Game::runGame(){
             gameCamera.camera.target.y += ((playerAnimation.getPositionY() + 32.0f) - gameCamera.camera.target.y) * (playerAnimation.getPlayerSpeed() * m_deltaTime);
         }
 
+        // places coin
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             Vector2 worldPos = GetScreenToWorld2D({static_cast<float>(GetMouseX()), static_cast<float>(GetMouseY())}, gameCamera.camera);
             Vector2 position = { worldPos.x - fireAnimation.getWidth()/2.0f, worldPos.y - fireAnimation.getHeight()/2.0f };
@@ -95,6 +91,7 @@ void Game::runGame(){
             PlaySound(coin);
         }
 
+        // enemy logic
         for(Enemy &enemy : enemies){
             enemy.setEnemySpeed(2.0f);
             if(CheckCollisionRecs(playerAnimation.getBeamAttackRect(), enemy.getHitboxRect())) {
@@ -108,11 +105,24 @@ void Game::runGame(){
                 enemy.setPositionRandom();
             }
         }
+        
+        // where light is drawn to screen
+        BeginTextureMode(lightMap);  
+            ClearBackground(GRAY); // screen tint (black for complete dark, etc.)
+            BeginBlendMode(BLEND_ADDITIVE); 
+                Vector2 screenPos = GetWorldToScreen2D(playerAnimation.getPosition(), gameCamera.camera);
+                drawLight(screenPos, 150, Color{255, 240, 200, 255});
+                Vector2 screenPos2 = GetWorldToScreen2D(fireAnimation.getPosition(), gameCamera.camera);
+                float flicker = 140.0 + sin(GetTime() * 10.0) * 10.0;
+                drawLight(screenPos2, flicker, ORANGE);
+            EndBlendMode();
+        EndTextureMode(); 
 
-        BeginDrawing(); 
-                    
+        // virtual screen
+        BeginTextureMode(target);  
+            ClearBackground(BLACK);
+            // 2D Mode - where game is drawn to virtual screen   
             BeginMode2D(gameCamera.camera); 
-
                 Utilities::drawBackground();
                 fireAnimation.updateSprite();
                 coinAnimation.updateSprite();
@@ -122,43 +132,35 @@ void Game::runGame(){
                     //enemy.chasePlayer(playerAnimation.getPosition());
                 }
                 particles.updateParticles();
-                
-            EndMode2D(); 
+            EndMode2D();
+
+            BeginBlendMode(BLEND_MULTIPLIED); 
+                DrawTextureRec(lightMap.texture, Rectangle{0.0f, 0.0f, static_cast<float>(lightMap.texture.width), static_cast<float>(lightMap.texture.height)}, Vector2{0, 0}, RAYWHITE);
+            EndBlendMode(); 
+        EndTextureMode();
+
+        BeginDrawing();
             
+            ClearBackground(BLACK);
+            m_scale = std::max(1.0f, std::min(static_cast<float>(GetRenderWidth())  / static_cast<float>(Global::screenWidth),
+                                              static_cast<float>(GetRenderHeight()) / static_cast<float>(Global::screenHeight)));           
+            float offsetX = (static_cast<float>(GetRenderWidth()) - static_cast<float>(Global::screenWidth) * m_scale) / 2.0f;
+            float offsetY = (static_cast<float>(GetRenderHeight()) - static_cast<float>(Global::screenHeight) * m_scale) / 2.0f;
+            
+            DrawTexturePro(
+                target.texture,
+                { 0, 0, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) },
+                { offsetX, offsetY, static_cast<float>(Global::screenWidth) * m_scale, static_cast<float>(Global::screenHeight) * m_scale },
+                { 0, 0 },
+                0.0f,
+                WHITE
+            );
             // UI (temp)
             std::string enemiesKilledStr = std::to_string(enemiesKilled);
             const char* enemiesKilledCStr = enemiesKilledStr.c_str();
             DrawText("Enemies Killed: ", 20 * m_scale, 20, 20 * m_scale, YELLOW);
             DrawText(enemiesKilledCStr, 180 * m_scale, 20, 20 * m_scale, YELLOW);
-
-            BeginTextureMode(lightMap);  
-
-                ClearBackground(GRAY); // screen tint (black for complete dark, etc.)
-                BeginBlendMode(BLEND_ADDITIVE); 
-                    Vector2 screenPos = GetWorldToScreen2D(playerAnimation.getPosition(), gameCamera.camera);
-                    drawLight(screenPos, 150, Color{255, 240, 200, 255});
-                    Vector2 screenPos2 = GetWorldToScreen2D(fireAnimation.getPosition(), gameCamera.camera);
-                    float flicker = 140.0 + sin(GetTime() * 10.0) * 10.0;
-                    drawLight(screenPos2, flicker, ORANGE);
-                EndBlendMode();
-
-            EndTextureMode(); 
-
-            BeginBlendMode(BLEND_MULTIPLIED); 
-                DrawTextureRec(lightMap.texture, Rectangle{0.0f, 0.0f, static_cast<float>(lightMap.texture.width), -static_cast<float>(lightMap.texture.height)}, Vector2{0, 0}, RAYWHITE);
-            EndBlendMode(); 
-
-        EndDrawing(); 
-    } 
-    
-    // explicit destructor calls
-    fireAnimation.~Animation();
-    coinAnimation.~Animation();
-    playerAnimation.~Player();
-    particles.~Particles();
-    initSoundSystem.~SoundSystem();
-    Assets::unloadAssets();
-    UnloadMusicStream(music);
-
+        EndDrawing();  
+    }  
     CloseWindow();
 }
