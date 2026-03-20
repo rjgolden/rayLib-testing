@@ -1,10 +1,10 @@
 #pragma once
 
-#include "utilities.h"
+#include "../Namespaces/utilities.h"
+#include "../Namespaces/assets.h"
 #include "player.h"
 #include "animation.h"
 #include "soundSystem.h"
-#include "config.h"
 #include "gameCamera.h"
 #include "enemy.h"
 

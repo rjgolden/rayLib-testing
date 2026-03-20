@@ -3,8 +3,8 @@
 #include <cmath>
 #include <cstdint>
 #include "animation.h"
-#include "assets.h"
-#include "global.h"
+#include "../Namespaces/assets.h"
+#include "../Namespaces/global.h"
 
 class Enemy : public Animation {
         

@@ -4,8 +4,8 @@
 #include <array>
 #include <cstdint>
 #include <string>
-#include "utilities.h"
-#include "assets.h"
+#include "../Namespaces/utilities.h"
+#include "../Namespaces/assets.h"
 
 class Animation {
 

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <memory>
 #include "animation.h"
-#include "global.h"
+#include "../Namespaces/global.h"
 
 class Player : public Animation {
 
@@ -33,7 +33,7 @@ class Player : public Animation {
         Rectangle getBeamAttackRect();
 
         // states
-        enum {IDLE,LEFT,RIGHT,UP,DOWN, ATTACK_RIGHT, ATTACK_LEFT, ATTACK_DOWN};
+        enum {IDLE, LEFT, RIGHT, UP, DOWN, ATTACK_RIGHT, ATTACK_LEFT, ATTACK_DOWN};
 
     private:
     

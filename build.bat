@@ -7,7 +7,7 @@ REM Define main variables
 SET MAKE_PATH=C:/raylib/w64devkit/bin/mingw32-make.exe
 SET RAYLIB_PATH=C:/raylib/raylib
 SET PROJECT_NAME=Game
-SET SOURCE_FILES="src/main.cpp src/assets.cpp src/animation.cpp src/player.cpp src/enemy.cpp src/soundSystem.cpp src/gameCamera.cpp src/utilities.cpp src/game.cpp src/particles.cpp"
+SET SOURCE_FILES="src/main.cpp src/Namespaces/assets.cpp src/Classes/animation.cpp src/Classes/player.cpp src/Classes/enemy.cpp src/Classes/soundSystem.cpp src/Classes/gameCamera.cpp src/Namespaces/utilities.cpp src/Classes/game.cpp src/Classes/particles.cpp"
 
 REM Check if we want a debug build
 if "%1"=="debug" (
