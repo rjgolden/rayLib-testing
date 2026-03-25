@@ -3,12 +3,13 @@
 /*-------------------------------*/
 Animation::Animation(Texture2D texture, uint8_t frameCount, float positionX, float positionY, bool random){
 
-    // Load textures
+    // load textures
     m_texture = texture;
 
     m_defaultWidth = static_cast<float>(m_texture.width) / static_cast<float>(frameCount);
     m_defaultHeight = static_cast<float>(m_texture.height);
-    // Rectangles 
+
+    // rectangles 
     m_animationRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight }; 
     m_hitboxRect = { 0.0f, 0.0f, m_defaultWidth, m_defaultHeight };
 
