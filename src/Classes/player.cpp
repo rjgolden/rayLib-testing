@@ -258,9 +258,7 @@ void Player::handleKeyboardAttack() {
     static Vector2 attackUpPos = {11.0f, 0.0f};
     static Vector2 attackDownPos = {11.0f, 0.0f};
     m_beamAnimationX.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
-    m_beamAnimationX.setHitboxDimensions(Vector2{0.0f, 0.0f});
     m_beamAnimationY.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
-    m_beamAnimationY.setHitboxDimensions(Vector2{0.0f, 0.0f});
 
     if(IsKeyDown(KEY_LEFT)){
         m_idle = false;
@@ -322,9 +320,7 @@ void Player::handleControllerAttack() {
     static Vector2 attackUpPos = {11.0f, 0.0f};
     static Vector2 attackDownPos = {11.0f, 0.0f};
     m_beamAnimationX.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
-    m_beamAnimationX.setHitboxDimensions(Vector2{0.0f, 0.0f});
     m_beamAnimationY.setPosition({m_positionX + 16.0f, m_positionY + 32.0f});
-    m_beamAnimationY.setHitboxDimensions(Vector2{0.0f, 0.0f});
 
     if(IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)){
         m_idle = false;
@@ -434,6 +430,9 @@ void Player::handleControllerAttack() {
 
 void Player::updateSprite() {
 
+    m_beamAnimationX.setHitboxDimensions({0.0f, 0.0f});
+    m_beamAnimationY.setHitboxDimensions({0.0f, 0.0f});
+
     handleKeyboardMovement();
     handleKeyboardDash();
     handleKeyboardAttack();
@@ -444,12 +443,11 @@ void Player::updateSprite() {
     }
     setState(m_state);  
     animateSprite();
-    if(IsKeyDown(KEY_DOWN) && m_currentState == ATTACK_DOWN) {
-        drawHitbox();
-    } 
-    else { 
+    if(!(IsKeyDown(KEY_DOWN) && !(m_currentState == ATTACK_DOWN))) {
         drawSprite(); 
-        drawHitbox();
+    } 
+    else {  
+        //drawHitbox();
     }
 
 }

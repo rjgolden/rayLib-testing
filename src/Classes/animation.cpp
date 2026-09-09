@@ -66,8 +66,8 @@ void Animation::updateSprite(){
     if(m_random) animateSpriteRandom();
     else animateSprite();
     drawSprite();
-    drawHitbox();
-    drawAnimationBoxLines();
+    //drawHitbox();
+    //drawAnimationBoxLines();
 }
 
 /*-------------GETTERS------------*/
