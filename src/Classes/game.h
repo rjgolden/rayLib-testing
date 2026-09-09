@@ -13,6 +13,7 @@ class Game {
     public:
         void runGame();
         void drawLight(Vector2 position, float radius, Color color);
+        void checkEnemyCollisions(std::array<Enemy, 10>& enemies, float deltaTime);
 
     private:
         float m_scale{1.0f};  

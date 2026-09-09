@@ -63,9 +63,15 @@ void Enemy::drawHurtFrame() {
     DrawTexture(m_enemyHurt, m_positionX, m_positionY, WHITE);
 }
 
+void Enemy::drawCircle(){
+    DrawCircleLines(m_positionX + 16.0f, m_positionY + 16.0f, circleRadius, RED);
+}
+
 void Enemy::updateSprite(){
     m_healthBarRect.x = m_positionX; 
     m_healthBarRect.y = m_positionY - 13.0f;
+    circlePos.x = m_positionX + 16.0f;
+    circlePos.y= m_positionY + 16.0f;
     if(m_hurtFrameActive) {
         drawHurtFrame();
         m_hurtFrameActive = false; // reset hurt frame after drawing
@@ -73,6 +79,7 @@ void Enemy::updateSprite(){
     else{
         animateSprite();
         drawSprite();
+        drawCircle();
     }
     drawHealthBar();
 }
@@ -81,6 +88,20 @@ void Enemy::updateSprite(){
 float Enemy::getHealth() {
     return m_enemyHealth;
 }  
+
+Vector2 Enemy::getCirclePos() {
+    return circlePos;
+}  
+
+ void Enemy::setPositionX(float pos, float deltaTime = 0.0f){
+    if(deltaTime > 0.0f) m_positionX += pos * deltaTime; 
+    else m_positionX = pos;
+ };
+
+  void Enemy::setPositionY(float pos, float deltaTime = 0.0f){
+    if(deltaTime > 0.0f) m_positionY += pos * deltaTime; 
+    else m_positionY = pos;
+  };
 
 void Enemy::setHealth(float health) {
     m_enemyHealth = health;

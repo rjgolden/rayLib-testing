@@ -14,6 +14,24 @@ void Game::drawLight(Vector2 position, float radius, Color color)
     );
 }
 
+void Game::checkEnemyCollisions(std::array<Enemy, 10>& enemies, float deltaTime) {
+    // Outer loop selects the first enemy (i)
+    for (int i = 0; i < 10; i++) {
+        // Inner loop selects the second enemy (j), starting right after 'i'
+        for (int j = i + 1; j < 10; j++) {
+            
+            // Check collision using raylib's circle-to-circle function
+            if (CheckCollisionCircles(enemies[i].getCirclePos(), 20.0f, 
+                                      enemies[j].getCirclePos(), 20.0f)) {
+                
+                enemies[i].setPositionX(enemies[i].getPositionX() * -.05f, deltaTime);
+                enemies[i].setPositionY(enemies[i].getPositionY() * -.05f, deltaTime);
+               
+            }
+        }
+    }
+}
+
 void Game::runGame(){
 
     // setup
@@ -28,14 +46,11 @@ void Game::runGame(){
     Player playerAnimation;
     
     // enemies
-    std::vector<Enemy> enemies;
-    enemies.reserve(10);
-    for(int i{0}; i<5; i++){
-        enemies.emplace_back(Enemy(Assets::enemy, 6));
+    std::array<Enemy, 10> enemies;
+    for(int i{0}; i<10; i++){
+        enemies[i] = (Enemy(Assets::enemy, 6));
     }
-    for(int i{0}; i<5; i++){
-        enemies.emplace_back(Enemy(Assets::flyEnemy, 6));
-    }
+
 
     // camera
     GameCamera gameCamera;
@@ -104,6 +119,7 @@ void Game::runGame(){
                 enemy.setHealth(20.0f); 
                 enemy.setPositionRandom();
             }
+            checkEnemyCollisions(enemies, m_deltaTime);
         }
         
         // where light is drawn to screen
@@ -129,7 +145,7 @@ void Game::runGame(){
                 playerAnimation.updateSprite();
                 for(Enemy &enemy : enemies){
                     enemy.updateSprite();
-                    //enemy.chasePlayer(playerAnimation.getPosition());
+                    enemy.chasePlayer(playerAnimation.getPosition());
                 }
                 particles.updateParticles();
             EndMode2D();
